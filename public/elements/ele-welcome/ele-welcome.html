@@ -1,0 +1,110 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 31-Oct-2016
+@Desc: Welcome Node [Welcome Screen]
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="ele-welcome">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+    </style>
+    <style is="custom-style">
+        .flex-equal-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-justified);
+        }
+        .c-header { @apply(--paper-font-headline); }
+        .c-desc { color: var(--paper-grey-600); }
+        .c-location {
+                float: right;
+                font-size: 15px;
+                vertical-align: middle;
+        }
+        .c-read { color: var(--google-blue-500); }
+    </style>
+
+        <h1 class="page-title" tabindex="-1">{{greeting}}</h1>
+        <div class="container flex-equal-justified">
+                <div>
+                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="1: Choose" elevation="1">
+                                  <div class="card-content">
+                                          <div class="c-header">Choose</div>
+                                          <p class="c-desc">
+                                              {{description}}
+                                          </p>
+                                  </div>
+                                  <div class="card-actions">
+                                          <paper-button class="c-read">Read More ... </paper-button>
+                                  </div>
+                        </paper-card>
+                </div>
+                <div>
+                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="2: Pursue" elevation="1">
+                                  <div class="card-content">
+                                          <div class="c-header">Pursue</div>
+                                          <p class="c-desc">
+                                              {{description}}
+                                          </p>
+                                  </div>
+                                  <div class="card-actions">
+                                          <paper-button class="c-read">Read More ... </paper-button>
+                                  </div>
+                        </paper-card>
+                </div>
+                <div>
+                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="3: Success" elevation="1">
+                                  <div class="card-content">
+                                          <div class="c-header">Success</div>
+                                          <p class="c-desc">
+                                              {{description}}
+                                          </p>
+                                  </div>
+                                  <div class="card-actions">
+                                          <paper-button class="c-read">Read More ... </paper-button>
+                                  </div>
+                        </paper-card>
+                </div>
+        </div>
+
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'ele-welcome',
+
+        properties: {
+                greeting: {
+                    type: String,
+                    value: 'Welcome! This is ele-welcome.',
+                    notify: true
+                },
+                description:{
+                        type: String,
+                        value: 'Description of the title header.',
+                }
+        }
+      });
+    })();
+  </script>
+</dom-module>

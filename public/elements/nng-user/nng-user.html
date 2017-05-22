@@ -1,0 +1,79 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 20-DEC-2016
+@Desc: User Information [User info element]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="nng-user">
+  <template>
+    <style include="shared-styles">
+        :host {
+                display: block;
+        }
+        paper-dialog.size-position {
+                position: absolute;
+                top: 25px;
+                right: -24px;
+                width: 300px;
+                /*height: 150px;*/
+                overflow: auto;
+        }
+    </style>
+
+        <paper-icon-button icon="icons:account-circle" data-dialog="modal" onclick="userInfo.open()"></paper-icon-button>
+        <!-- Dialog appear to choose the signin option
+                <paper-button data-dialog="dialog">plain dialog</paper-button>
+                <paper-button data-dialog="scrolling">scrolling dialog</paper-button>
+                <paper-button data-dialog="actions">dialog with actions</paper-button>
+                <paper-button data-dialog="modal">modal dialog</paper-button>
+                <paper-button data-dialog="dropdown">dialog with dropdown</paper-button>
+                <paper-button data-dialog="nested">dialog with nested dialog</paper-button>
+        -->
+
+        <paper-dialog id="userInfo" class="size-position" alwaysOnTop="true">
+                <h2>User Name</h2>
+                <p>User Email-ID</p>
+                <p>Signout/Logout</p>
+                <div class="buttons">
+                        <paper-button  dialog-confirm autofocus>Hide</paper-button>
+                </div>
+        </paper-dialog>
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'nng-user',
+
+        properties: {
+                greeting: {
+                    type: String,
+                    value: 'Welcome !!!',
+                    notify: true
+                },
+                description:{
+                        type: String,
+                        value: 'Description of the title header.',
+                }
+        },
+
+        show: function(){
+                console.log("OAuth Clicked...");
+                this.$.oath.open();
+        },
+
+        ready: function(){
+                console.log("nng-user Loaded.");
+        }
+      });
+    })();
+  </script>
+</dom-module>

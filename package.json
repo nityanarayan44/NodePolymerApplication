@@ -1,0 +1,28 @@
+{
+  "name": "Node-Server",
+  "version": "1.0.0",
+  "description": "To host very general perpose rest api.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ashutosh Mishra [NNG44]",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser"	: "1.15.0",
+    "cookie-parser"	: "^1.4.3",
+    "express"		: "3.3.8",
+    "fs"			: "0.0.2",
+    "multer"		: "^1.1.0",
+    "nodemon"		: "^1.9.2",
+    "path"			: "^0.12.7",
+    "request"		: "^2.69.0",
+    "util"			: "^0.10.3",
+    "express-session": "1.13.0",
+    "node-rest-client": "^1.8.0",
+    "phantomjs"     : "",
+    "formidable"    : "",
+    "nodemailer"    : "",
+    "events"        : ""
+  }
+}

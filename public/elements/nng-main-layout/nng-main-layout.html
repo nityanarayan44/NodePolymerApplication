@@ -1,0 +1,303 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 03-JAN-2017
+@Desc: Main Layout Element [Layout]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="../../bower_components/paper-styles/typography.html"> -->
+
+<link rel="import" href="../../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/demo/sample-content.html">
+
+<dom-module id="nng-main-layout">
+        <template>
+                <!--
+                        Issue on: <app-header>
+                        when screen size is less than 455px, header panel get hidden bcz of extra 24px margin of left and right.
+                -->
+                <style is="custom-style">
+                        :host {
+                                display: block;
+                        }
+                        body {
+                          margin: 0;
+                          font-family: 'Roboto', 'Noto', sans-serif;
+                          background-color: #eee;
+                        }
+
+                        app-header {
+                                left: 0;
+                                /*margin-left: -24px;
+                                margin-right: -24px;*/
+                                background-color: #4285f4;
+                                color: #fff;
+                        }
+
+                        app-header paper-icon-button {
+                          --paper-icon-button-ink-color: #fff;
+                        }
+
+                        app-drawer-layout {
+                          --app-drawer-layout-content-transition: margin 0.8s;
+                        }
+
+                        app-drawer {
+                          --app-drawer-content-container: {
+                            background-color: #eee;
+                          }
+                        }
+
+                        .drawer-content {
+                          margin-top: 80px;
+                          height: calc(100% - 80px);
+                          overflow: auto;
+                        }
+
+                        .paper-item-link {
+                                color: inherit;
+                                text-decoration: none;
+                        }
+                        paper-button.dialog-confirm-button {
+                                text-transform: none;
+                                /*color: #eeff41;*/
+                                border-color: darkgreen;
+                                border-width: 1px;
+                                border-style: solid;
+                        }
+                        paper-material.welcome-screen{
+                                padding:15px;
+                                padding-bottom: 10px;
+                        }
+                        h6.developer{
+                                color: #bbb;
+                                padding: 40px;
+                        }
+                        paper-dialog.response-dialog{
+                                /*min-width: 50%;*/
+                        }
+                        /*@media screen and (device-width: 415px) and (min-width: 400px){
+                                paper-material.welcome-screen{
+                                        padding-bottom: 10px;
+                                }
+                                app-header {
+                                        left: 0;
+                                        background-color: #4285f4;
+                                        color: #fff;
+                                }
+                        }
+                        @media only screen
+                          and (min-device-width: 320px)
+                          and (max-device-width: 480px)
+                          and (-webkit-min-device-pixel-ratio: 2)
+                          and (orientation: portrait) {
+                                  app-header {
+                                          left: 0;
+                                          background-color: #4285f4;
+                                          color: #fff;
+                                  }
+                        }*/
+                </style>
+
+                <!-- Main Layout -->
+                        <app-header-layout>
+
+                                <!-- Application's layout Header -->
+                                <!-- <app-header fixed effects="waterfall">
+                                        <app-toolbar>
+                                                <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
+                                                <div main-title> [[appTitle]] </div>
+                                                <nng-user></nng-user>
+                                        </app-toolbar>
+                                </app-header> -->
+
+                                <app-drawer-layout id="drawerLayout">
+                                        <app-header fixed effects="waterfall">
+                                                <app-toolbar>
+                                                        <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
+                                                        <div main-title> [[appTitle]] </div>
+                                                        <nng-user></nng-user>
+                                                </app-toolbar>
+                                        </app-header>
+
+                                        <!-- Side menu of main layout -->
+                                        <app-drawer  swipe-open>
+                                                <div class="drawer-content">
+
+                                                        <!-- <div role="listbox">
+                                                                <a class="paper-item-link" href="#page1" tabindex="-1">
+                                                                        <paper-item> <iron-icon icon="inbox" item-icon></iron-icon> &nbsp;  Lk-1</paper-item>
+                                                                </a>
+                                                                <a class="paper-item-link" href="#starred" tabindex="-1">
+                                                                        <paper-item> Lk-2 </paper-item>
+                                                                </a>
+                                                                <a class="paper-item-link" href="#sent" tabindex="-1">
+                                                                        <paper-item> Lk-3</paper-item>
+                                                                </a>
+                                                        </div> -->
+
+                                                        <paper-icon-item on-click="showPICreate">
+                                                                <iron-icon icon="icons:add-circle-outline" item-icon></iron-icon> <span> PI - MAIN </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="showHistory">
+                                                                <iron-icon icon="icons:history" item-icon></iron-icon> <span> PI - History </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="showHowToUsePI">
+                                                                <iron-icon icon="icons:help-outline" item-icon></iron-icon> <span> PI - How to use </span>
+                                                        </paper-icon-item>
+
+                                                        <h6 class="developer"> Developed By: Ashutosh Mishra</h6>
+                                                </div>
+                                        </app-drawer>
+
+                                        <!-- My custom Element within main layout [for workspace area] -->
+                                        <!-- Main Area, where all the element/main-functionality will work. -->
+                                                <div id="workspace">
+
+                                                        <paper-material id="welcome" class="welcome-screen" elevation = "2">
+																<font SIZE="5">@Mindfire Solutions</font><br/>
+																<font SIZE="1">Its 'Experimental Club' of Ashutosh Mishra</font>
+																<!--
+                                                                <h1>Welcome to this @pplication.</h1>
+
+																-->
+                                                        </paper-material><br/><br/>
+
+														<paper-material id="welcome" class="welcome-screen" elevation = "2">
+															<h3>What is it ?</h3>
+															<p>This interface is build to interact with "PLANNING INTERFACE" service of Enterprise server.</p>
+														</paper-material>
+
+                                                </div>
+                                </app-drawer-layout>
+                        </app-header-layout>
+
+                        <!-- Dialog: for special purpose. -->
+                        <paper-dialog id="dialog" class="response-dialog" modal>
+                                <h1> Information </h1>
+                                <div id="res"></div><hr/>
+                                <div class="buttons">
+                                        <paper-button dialog-confirm class="dialog-confirm-button" auto-focus> OKEY, GOT IT </paper-button>
+                                </div>
+                        </paper-dialog>
+
+                        <!-- toast for notifications -->
+                        <paper-toast id="toast" text="This toast notifying you some info."><!-- <paper-button onclick="notification.toggle()" class="yellow-button">Close now!</paper-button> --></paper-toast>
+        </template>
+
+  <script>
+  (function() {
+      'use strict';
+
+      Polymer({
+        is: 'nng-main-layout',
+
+        /* Listeners for child element's events */
+        listeners: {
+                'on-pi-response': 'responseDialog'
+        },
+
+        responseDialog: function(e) {
+		//log.
+		console.log(e);
+
+                this.$.dialog.open();
+                this.$.res.innerHTML = e.detail.responseTXT;
+                this.$.toast.text = e.detail.notify;
+                this.$.toast.open();
+                //Recording as history;
+                this.push('logs', this.historyTemplate(e.detail.responseTXT, e.detail.url));
+        },
+
+        properties: {
+                greeting: {
+                        type: String,
+                        value: 'Welcome!',
+                        notify: true
+                },
+                appTitle: {
+                        type: String,
+                        value: "Planning Interface"
+                },
+                layoutProperties: {
+                        type: Object,
+                        value: function(){ return {}; }
+                },
+				howToUseText: {
+						type: String,
+						value: '<p>Well there is nothing extra/advance instructructions to use it,<br/>but you do as this application suggest you to do.<br/>Any blank field would be assumed as default value set by this application.<br/>and default values are shown as label of fields.</p>'
+				},
+
+                logs: {
+                        type: Array,
+                        value: function(){ return []; }
+                }
+        },
+
+        toggleSideMenu: function(){
+                //Forcing side menu drawer to be open.
+                var drawerLayout = document.getElementById('drawerLayout');
+                document.getElementById('toggle').addEventListener('tap', function() {
+                        if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+                                drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+                        } else {
+                                drawerLayout.drawer.toggle();
+                        }
+                });
+        },
+
+        historyTemplate: function(text, requestUrl="blank"){
+                return '<paper-material elevation="2" style="margin: 5px;" > <p align="right" style="margin:1px;"><font face="consolas" size="1">'+(new Date())+'</font></p><hr/>'+text+'<br/> <b>Requested Url:</b><br/> <paper-material elevation="0" style="margin:0px; overflow: hidden; overflow-x: scroll;">'+requestUrl+'</paper-material> </paper-material>';
+        },
+
+        showPICreate: function(){
+                var main = document.getElementById("workspace");
+                main.innerHTML = '';
+                var node = document.createElement("nng-pi");
+                main.appendChild(node);
+
+        },
+
+        showHowToUsePI: function(){
+		var main = document.getElementById("workspace");
+                main.innerHTML = '';
+                var node = document.createElement("div");
+		node.innerHTML = '<paper-material elevation="0" style="padding: 0px; margin:0px;"> <h2 style="padding: 0px; margin:0px;"> HOW TO USE </h2></paper-material><paper-progress value="100" style="width:100%;"></paper-progress> <paper-material elevation="2"><p align="center">'+ this.howToUseText +'</p> </paper-material>';
+                main.appendChild(node);
+        },
+
+        showHistory: function(){
+                var main = document.getElementById("workspace");
+                main.innerHTML = '';
+                var node = document.createElement("div");
+                //writting all history.
+                var allHistory = this.logs;
+                allHistory.reverse(); /*Reversing the history as latest/recent.*/
+		node.innerHTML = '<paper-material elevation="0" style="padding: 0px; margin:0px;"> <h2 style="padding: 0px; margin:0px;">HISTORY <font face="Roboto" size="1">(sort by recent history item)</font></h2></paper-material><paper-progress value="100" style="width:100%;"></paper-progress>';
+		allHistory.map(function(historyData){ node.innerHTML += historyData ; });
+                //appending on workspace
+                main.appendChild(node);
+        },
+
+        attached: function(){
+                console.log("nng-main-Layout loaded.");
+                this.toggleSideMenu();
+                //Initially hidding side panel
+                drawerLayout.forceNarrow = true;
+
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

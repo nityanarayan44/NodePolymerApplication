@@ -1,0 +1,110 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 26-JAN-2017
+@Desc: Extra Layout for my 'Connect' app.
+-->
+
+<!-- IMPORT -->
+        <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        <link rel="import" href="../../bower_components/polymer/polymer.html">
+        <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+        <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+        <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+
+<!-- Element structure and its Definition -->
+<dom-module id="nng-auth">
+
+        <template>
+                <!-- Custom style script -->
+                <style is="custom-style">
+                        :host, body {
+                                margin: 0;
+                                font-family: 'Roboto', 'Noto', sans-serif;
+                                background-color: #ccc;
+                        }
+                        paper-dialog{
+                                min-width: 50%;
+                                min-height: 50%;
+                        }
+                        .authTitle{
+                                font-family: 'Roboto', 'Noto', 'Calibri', sans-serif;
+                                background-color: #ccc;
+                                font-size: 5em;
+                        }
+                        .card{
+                                width: 70%;
+                                padding: 10px;
+                                font-size: 5rem;
+                        }
+                </style>
+                <!-- Element Structure -->
+                <div id="workspace">
+                        <!-- <template is="dom-if" if="[[_isFailed]]">
+                                <paper-card class="card"> FAILED </paper-card>
+                        </template>
+                        <template is="dom-if" if="!([[_isFailed]])">
+                                <nng-connect-layout></paper-connect-layout>
+                        </template> -->
+                </div>
+                <paper-dialog id="auth" class="size-position" alwaysOnTop="true" modal>
+                        <h1 class="authTitle"> Authentication </h1>
+                        <div class="buttons">
+                                <paper-button on-click="_handleFail" dialog-confirm> FAIL </paper-button>
+                                <paper-button on-click="_handlePass" dialog-confirm> PASS </paper-button>
+                        </div>
+                </paper-dialog>
+
+        </template>
+
+        <!-- Polymer Script -->
+        <script>
+        (function() {
+                'use strict';
+
+                Polymer({
+                        is: 'nng-auth',
+
+                        /* Listeners for child element's events */
+                        listeners: {
+                        'on-auth-true': 'closeDialog',
+                        'on-auth-false':'handleError'
+                        },
+
+                        properties:{
+                                _isFailed:{type: Boolean, value: false},
+                                _userId:{type: String, value: ''},
+                                _token:{type: String, value: ''},
+                                _authFrom:{type: String, value: ''}
+                        },
+
+                        _handlePass: function(){
+                                //Handle passed authrntication
+                                //console.info("WELCOME");
+                                this.fire('authPassed', {status:'PASSED', user: 'T1', time: (new Date()).getTime(), token:'asdfewrwrw345' });
+                                //this.$.workspace.innerHTML = '<nng-connect-layout></paper-connect-layout>';
+                                return true;
+                        },
+                        _handleFail: function(){
+                                //handle failed authentication.
+                                //console.warn("Authentication failed.");
+                                this.fire('authFailed', {status:'FAILED', time: (new Date()).getTime(), token:'asdfewrwrw345' });
+                                return false;
+                        },
+
+                        _calc: function(){
+                                return true;
+                        },
+
+                        attached: function(){
+
+                        },
+                        ready: function(){
+                                //Open auth dialog
+                                this.$.auth.open();
+                        }
+                });
+        })();
+        </script>
+
+</dom-module>

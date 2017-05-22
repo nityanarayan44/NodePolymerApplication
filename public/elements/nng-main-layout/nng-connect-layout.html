@@ -1,0 +1,334 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 26-JAN-2017
+@Desc: Extra Layout for my 'Connect' app.
+-->
+
+<!-- IMPORT -->
+        <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+        <link rel="import" href="../../bower_components/polymer/polymer.html">
+        <link rel="import" href="../../bower_components/font-roboto/roboto.html">
+        <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/notification-icons.html">
+        <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+        <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+        <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+        <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+        <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+        <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+        <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+        <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+        <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+        <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+        <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+        <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+        <link rel="import" href="../../bower_components/app-layout/demo/sample-content.html">
+
+<!-- Element Definition -->
+<dom-module id="nng-connect-layout">
+        <template>
+
+                <!-- element style -->
+                        <style is="custom-style">
+
+                                .author{
+                                        padding: 10px;
+                                }
+
+                                body {
+                                        margin: 0;
+                                        font-family: 'Roboto', 'Noto', sans-serif;
+                                        background-color: #ccc;
+                                }
+
+                                app-header {
+                                        background-color: var(--google-red-500);
+                                        /*background-color: var(#4285f4);*/
+                                        color: #fff;
+                                }
+
+                                app-header paper-icon-button {
+                                        --paper-icon-button-ink-color: #fff;
+                                }
+
+                                app-drawer-layout {
+                                        --app-drawer-layout-content-transition: margin 0.5s;
+                                        overflow: hidden;
+                                        overflow-y: visible;
+                                }
+
+                                app-drawer {
+                                        --app-drawer-content-container: {
+                                                background-color: #eee;
+                                        }
+                                }
+
+                                paper-icon-button{
+                                        align-items: flex-start;
+                                        align-content: flex-start;
+                                        text-align: center;
+                                }
+
+                                .drawer-content {
+                                        margin-top: 80px;
+                                        height: calc(100% - 80px);
+                                        overflow: auto;
+                                }
+                                .appTitle{
+                                        font-size: 1.5rem;
+                                }
+                                .demoCard{
+                                        padding: 10px;
+                                        font-family: 'Roboto', 'roboto';
+                                        background-color: white;
+                                        width: auto;
+                                        color: black;
+                                        margin: 10px;
+                                        overflow: hidden;
+                                        /*font-size: 1rem;*/
+                                }
+                                #bg{
+                                        font-size: 2rem;
+                                        top:100px;
+                                        left: 10%;
+                                        z-index: -1;
+                                        opacity: 0.7;
+                                }
+                                .wm{
+                                        height: 3rem; width: 3rem;
+                                        color: var(--google-red-500);
+                                }
+                        /* IRON PAGES Styles */
+                                iron-pages {
+                                  width: 100%;
+                                  /*height: 200px;*/
+                                  font-size: 50px;
+                                  color: white;
+                                  text-align: center;
+                                }
+                                /*
+                                iron-pages div {
+                                  width: 100%;
+                                  height: auto;
+                                  padding: 80px 0;
+                                  margin: 10px;
+                                }
+                                iron-pages div:nth-child(1) {
+                                  background-color: var(--google-blue-500);
+                                }
+                                iron-pages div:nth-child(2) {
+                                  background-color: var(--google-red-500);
+                                }
+                                iron-pages div:nth-child(3) {
+                                  background-color: var(--google-green-500);
+                                }
+                                */
+
+                        /* Style Ends */
+                        </style>
+
+                <!-- Elements -->
+                        <app-header-layout id="connect">
+
+                                <!-- Application header menu bar -->
+                                <app-header fixed effects="waterfall">
+                                        <app-toolbar>
+                                                <paper-icon-button id="toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                                                <div class="appTitle" main-title> [[title]] </div>
+                                                <nng-user></nng-user>
+                                                <paper-icon-button id="more" icon="more-vert"></paper-icon-button>
+                                        </app-toolbar>
+                                </app-header>
+
+                                <!-- Application side-bar and workspace[side by side] -->
+                                <app-drawer-layout id="drawerLayout">
+
+                                        <!-- Application side bar[drawer menu content] -->
+                                        <app-drawer>
+                                                <div class="drawer-content">
+                                                        <!-- Logged User info -->
+                                                        <paper-icon-item on-click="_allPostView" >
+                                                                <iron-icon icon="communication:forum" item-icon></iron-icon> <span> All Public Posts </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="_newPost">
+                                                                <iron-icon icon="communication:chat" item-icon></iron-icon> <span> Post Something </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="_notifications">
+                                                                <iron-icon icon="social:notifications" item-icon></iron-icon> <span> Notifications </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="_liveUserView">
+                                                                <iron-icon icon="social:person" item-icon></iron-icon> <span> Live Users </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="_experimentsView">
+                                                                <iron-icon icon="icons:code" item-icon></iron-icon> <span> Experiments </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-click="_allEventsView">
+                                                                <iron-icon icon="notification:event-note" item-icon></iron-icon> <span>Events</span>
+                                                        </paper-icon-item>
+
+                                                        <!-- @Application Info. -->
+                                                        <paper-item>
+                                                                <hr/>
+                                                                <div class="author">
+                                                                        <paper-item-body two-line>
+                                                                                <div><code>@Author: [[about.author]] </code></div>
+                                                                                <div><code>@Project: [[about.prjName]]</code> </div>
+                                                                                <div><code>@Status: [[about.status]] </code></div>
+                                                                        </paper-item-body>
+                                                                </div>
+                                                        </paper-item>
+                                                </div>
+                                        </app-drawer>
+
+                                        <!-- Application main-workspace -->
+                                        <iron-pages id="pages" selected="6">
+                                                <!-- add Some more elements -->
+                                                <sample-content size="5"></sample-content>
+                                                <paper-material elevation='1' class="demoCard"> POST SOMETHING </paper-material>
+                                                <paper-material elevation='1' class="demoCard"> Notifications </paper-material>
+                                                <paper-material elevation='1' class="demoCard"> Live Users </paper-material>
+                                                <paper-material elevation='1' class="demoCard"> Experiments </paper-material>
+                                                <paper-material elevation='1' class="demoCard"> Events </paper-material>
+
+                                                <div id="bg">
+                                                        <paper-material elevation='1' class="demoCard">
+                                                                Welcome to
+                                                                <iron-icon class="wm" icon="social:people" item-icon></iron-icon>
+                                                                CONNECT
+                                                                <p style="font-size:10px;"> This project is just an experiment under the auther. [Part of: experimental club]</p>
+                                                                <p style="font-size:10px;"> and it is only for personal networks (like: LAN NETWORK), so any one want to access the CONNECT he needs to connect that personal network first. </p>
+                                                        </paper-material>
+                                                                <!-- <div>
+                                                                        <iron-icon class="wm" icon="social:whatshot" item-icon></iron-icon>
+                                                                        <blockquote>Mindfire Solutions</blockquote>
+                                                                </div> -->
+                                                </div>
+
+                                        </iron-pages>
+
+                                </app-drawer-layout>
+                        </app-header-layout>
+
+                        <!-- Toaster Notification -->
+                        <paper-spinner id="wait"></paper-spinner>
+                        <paper-toast id="toast" text="WELCOME TO CONNECT."></paper-toast>
+        </template>
+        <script>
+
+                (function() {
+                        'use strict';
+
+                        Polymer({
+                        /*
+                        ------------------------------------------------------------------
+                        Registering dom-element with name 'nng-connect-layout'.
+                        ------------------------------------------------------------------
+                        */
+                                is: 'nng-connect-layout',
+
+                        /*
+                        ------------------------------------------------------------------
+                        user defined properties of dom-element.
+                        ------------------------------------------------------------------
+                        */
+                                properties: {
+                                        title:{ type: String, value: 'CONNECT' },
+                                        about:{ type: Object, value: function(){ return {author:'Ashutosh Mishra', prjName:'CONNECT', status:'in progress'}; } },
+                                        msgDataObj:{type:Object, value: function(){ return {};}, notify: true, observer: '_msgObjectChanged' },
+                                        authDataObj:{type:Object, value: function(){ return {};}, notify: true, observer: '_authObjectChanged' }
+                                },
+
+                        /*
+                        ------------------------------------------------------------------
+                        attaching listeners for dom-element.
+                        ------------------------------------------------------------------
+                        */
+                                listeners: {'on-pi-response': 'responseDialog'},
+
+                        /*
+                        ------------------------------------------------------------------
+                         functions for element nevigation using iron pages.
+                        ------------------------------------------------------------------
+                        */
+                                _allPostView: function(){ this.$.pages.selected = 0; console.info('Element routed to public post view.'); },
+                                _newPost: function(){ this.$.pages.selected = 1; console.info('Element routed to new post creation.'); },
+                                _notifications: function(){ this.$.pages.selected = 2; console.info('Element routed to notifications.'); },
+                                _liveUserView: function(){ this.$.pages.selected = 3; console.info('Element routed to live users view.'); },
+                                _experimentsView: function(){ this.$.pages.selected = 4; console.info('Element routed to my experiments view.'); },
+                                _allEventsView: function(){ this.$.pages.selected = 5; console.info('Element routed to events view.'); },
+                                menuSelection: function(){
+                                        //SELECTING PAGE AS PER MENU.[incremental]
+                                        //this.$.pages.selectNext();
+                                        console.dir(index.path[1]);
+                                        this.$.pages.selected = 0;
+                                        /* MENU SELECTION */
+                                        //var pages = document.querySelector('iron-pages');
+                                        /*var controlMenu = document.querySelector('paper-icon-item');
+                                        controlMenu.addEventListener('click', function(e) {
+                                                pages.selectNext();
+                                        });*/
+                                },
+                        /*
+                        ------------------------------------------------------------------
+                        User defined functions for element.
+                        ------------------------------------------------------------------
+                        */
+
+                                /* Side menu drawer toggle function. */
+                                _toggleSideMenu: function(){
+                                                //var drawerLayout = document.getElementById('drawerLayout');
+                                                //var drawerLayout = this.$.drawerLayout;
+                                                this.$.toggle.addEventListener('tap', function() { if (drawerLayout.forceNarrow || !drawerLayout.narrow) { drawerLayout.forceNarrow = !drawerLayout.forceNarrow; } else { drawerLayout.drawer.toggle(); } });
+                                },
+
+                                /* On autherisation, when autherisation object changes. */
+                                _authObjectChanged: function(){
+                                                if(this.authDataObj.status && this.authDataObj.time){
+                                                        console.info(' Authentication Received...');
+                                                        console.dir(this.authDataObj);
+                                                }else{ /* BLOCK THIS DOM-ELEMENT... */ }
+                                },
+
+                                /* On Msg arrival, when a new post/message arrived */
+                                _msgObjectChanged: function(){
+                                                if(this.msgDataObj.status && this.msgDataObj.time){
+                                                        console.info(' Message Object changed...');
+                                                        console.dir(this.msgDataObj);
+                                                }else{ /* MSG Object is empty... */ }
+                                },
+                        /*
+                        ------------------------------------------------------------------
+                        dom-element event.
+                        ------------------------------------------------------------------
+                        */
+                                attached: function(){ console.log("nng-connect-layout attached."); },
+
+                                ready: function(){
+                                        //function-call for Side Menu toggle.
+                                        this._toggleSideMenu();
+                                        //Toaster open.
+                                        this.$.toast.show();
+
+                                        /*
+                                        QUESTION:
+                                                1:Should i implement these service on API?
+                                                2:SHould i use iron-pages ?
+                                        TODO:
+                                                1: LiveUsers listing. [API CALL]
+                                                2: Public Post listing. [API CALL]
+                                                3: write Post
+                                                4: One to One Comm.
+                                        */
+                                }
+                        });
+                })();
+
+        </script>

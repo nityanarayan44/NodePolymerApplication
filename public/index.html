@@ -1,0 +1,156 @@
+<!--
+@Author: Nitya Narayan Gautam [Ashutosh Mishra]
+@Desc: A very basic Layout structure for application.
+-->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+  <title> CONNECT </title>
+
+<!-- Files import -->
+  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="/bower_components/font-roboto/roboto.html">
+  <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+  <link rel="import" href="/bower_components/iron-icons/social-icons.html">
+  <link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
+  <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+  <link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+  <link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
+  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+  <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
+  <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
+  <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
+  <link rel="import" href="/bower_components/app-layout/demo/sample-content.html">
+
+  <!-- Including costom elements -->
+  <link rel="import" href="./elements/elements.html">
+  <style is="custom-style">
+
+    body {
+            margin: 0;
+            font-family: 'Roboto', 'Noto', sans-serif;
+            background-color: #ccc;
+    }
+
+    app-header {
+            background-color: var(--google-red-500);
+            /*background-color: var(#4285f4);*/
+            color: #fff;
+    }
+
+    app-header paper-icon-button {
+            --paper-icon-button-ink-color: #fff;
+    }
+
+    app-drawer-layout {
+            --app-drawer-layout-content-transition: margin 0.5s;
+    }
+
+    app-drawer {
+            --app-drawer-content-container: {
+                    background-color: #eee;
+            }
+    }
+
+    .drawer-content {
+            margin-top: 80px;
+            height: calc(100% - 80px);
+            overflow: auto;
+    }
+    .appTitle{
+            font-size: 1.5rem;
+    }
+
+  </style>
+</head>
+
+<body unresolved>
+
+  <app-header-layout id="connect">
+
+    <app-header fixed effects="waterfall">
+      <app-toolbar>
+        <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
+        <div class="appTitle" main-title> ~~~~ [<iron-icon icon="social:whatshot" item-icon></iron-icon>]</div>
+        <!-- <paper-icon-button id="more" icon="more-vert"></paper-icon-button> -->
+      </app-toolbar>
+    </app-header>
+
+    <app-drawer-layout id="drawerLayout">
+
+      <app-drawer>
+        <div class="drawer-content">
+          <paper-icon-item>
+            <iron-icon icon="inbox" item-icon></iron-icon> <span>Inbox</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="query-builder" item-icon></iron-icon> <span>Snoozed</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="done" item-icon></iron-icon> <span>Done</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="drafts" item-icon></iron-icon> <span>Drafts</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="send" item-icon></iron-icon> <span>Sent</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="delete" item-icon></iron-icon> <span>Trash</span>
+          </paper-icon-item>
+          <paper-icon-item>
+            <iron-icon icon="report" item-icon></iron-icon> <span>Spam</span>
+          </paper-icon-item>
+        </div>
+      </app-drawer>
+
+      <!-- Element in main view -->
+      <!-- <sample-content size="100"></sample-content> -->
+      <nng-upload></nng-upload>
+
+    </app-drawer-layout>
+
+  </app-header-layout>
+
+  <script>
+
+    var drawerLayout = document.getElementById('drawerLayout');
+    //Initially close the drawer.
+    drawerLayout.forceNarrow = true;
+
+    document.getElementById('toggle').addEventListener('tap', function() {
+      if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+        drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+      } else {
+        drawerLayout.drawer.toggle();
+      }
+    });
+
+    /*
+        Javascript Binding for element.
+    */
+    (function(scope) {
+            var title = 'CONNECT';
+      var items = [];
+      var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
+
+      while (items.length < 10) {
+        items.push('Option Name');
+      }
+
+      scope._randomIcon = function() {
+        return icons[parseInt(icons.length * Math.random())];
+      };
+
+      scope.items = items;
+
+    })(document.querySelector('#connect'));
+  </script>
+
+</body>
+</html>

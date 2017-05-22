@@ -1,0 +1,142 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 20-DEC-2016
+@Desc: User Information [User info element]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="nng-upload">
+  <template>
+    <style include="shared-styles">
+        :host {
+                display: block;
+        }
+        paper-progress {
+                position: absolute;
+                left: -1px;
+                width: 101%;
+        }
+        #uploadForm{
+            padding: 10px;
+        }
+    </style>
+        &nbsp;
+        <center>
+            <paper-card id="uploadForm" elevation="2">
+                    <!-- To render the Form components -->
+                    <template is="dom-repeat" items="{{formObj}}" as="form">
+                        <!-- Form Title -->
+                        <template is="dom-if" if="[[_validateFormTitle(form.title)]]">
+                            <h3> [[form.title]] </h3>
+                            <paper-progress value="100"></paper-progress>
+                        </template>
+
+                        <!-- To render the Form element -->
+                        <template is="dom-repeat" items="{{form.params}}" as="param">
+                                <!-- For Input as text-->
+                                <template is="dom-if" if="[[_validateTextType(param.type)]]">
+                                    <paper-input label="[[param.label]]" name="[[param.name]]" required></paper-input>
+                                </template>
+
+                                <!-- For Input as File-->
+                                <template is="dom-if" if="[[_validateFileType(param.type)]]">
+                                    <paper-input type="file" name="[[param.name]]"></paper-input>
+                                </template>
+                        </template>
+
+                        <!-- Render Form Controls -->
+                        <span style="float:right;">
+                            <br/>
+                            <paper-button raised autofocus> [[form.submitButtonText]] </paper-button>
+                            <paper-button raised autofocus> CANCEL </paper-button>
+                        </span>
+                    </template>
+            </paper-card>
+
+                <!--paper-card id="uploadForm" class="size-position" elevation="2">
+                    <hr/> NODE SERVER CONNECTION TITLE <hr/>
+                            <p> prp1 </p>
+                            <p> prp2 </p>
+                            <p> prp3 </p>
+
+                </paper-card-->
+        </center>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      console.log("NNG-UPLOAD is loaded.");
+      Polymer({
+        is: 'nng-upload',
+
+        properties: {
+                formTitle: {
+                    type: String,
+                    value: 'UPLOAD_A_FILE',
+                    notify: true
+                },
+                targetURL: {
+                    type: String,
+                    value: '/api/v1/upload-file',
+                    notify: true
+                },
+                formObj: {
+                    type: Array,
+                    value: function(){ return []; },
+                    notify: true
+                },
+                description:{
+                        type: String,
+                        value: 'Description of the title header.',
+                }
+        },
+
+        _validateTextType: function(key){
+            return (key === 'text')? true : false;
+        },
+
+        _validateFileType: function(key){
+            return (key === 'file')? true : false;
+        },
+
+        _validateFormTitle: function(title){
+            return (title !== '') ? true : false;
+        },
+
+        attached: function(){
+            console.log('Element Attached');
+        },
+
+        ready: function(){
+            console.log("Composing the parameter for the form.");
+            //QUESTION: either via params passing or via database
+            //TODO: have to implement this
+
+            //Sample for the from array object.
+            this.formObj = [
+                {
+                    "title":"FORM-1",
+                    "target":"/api/v1/upload-file",
+                    "submitButtonText":"UPLOAD NOW",
+                    "backReference":"_scriptBack",
+                    "params":[
+                        {"type":"text", "label":"label1", "name":"name1"},
+                        {"type":"text", "label":"label2", "name":"name2"},
+                        {"type":"text", "label":"label3", "name":"name3"},
+                        {"type":"text", "label":"label4", "name":"name4"},
+                        {"type":"file", "label":"label5", "name":"name5"}
+                    ]
+                }
+            ];
+        }
+
+      });
+    })();
+  </script>
+</dom-module>
