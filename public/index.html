@@ -9,7 +9,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-  <title> CONNECT </title>
+  <title> NNG-NODE </title>
 
 <!-- Files import -->
   <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
@@ -110,15 +110,15 @@
       </app-drawer>
 
       <!-- Element in main view -->
-      <!-- <sample-content size="100"></sample-content> -->
-      <nng-upload></nng-upload>
+            <!-- <sample-content size="100"></sample-content> -->
+            <!-- <nng-upload></nng-upload> -->
+            <ele-welcome></ele-welcome>
 
     </app-drawer-layout>
 
   </app-header-layout>
 
   <script>
-
     var drawerLayout = document.getElementById('drawerLayout');
     //Initially close the drawer.
     drawerLayout.forceNarrow = true;
@@ -136,19 +136,18 @@
     */
     (function(scope) {
             var title = 'CONNECT';
-      var items = [];
-      var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
+            var items = [];
+            var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
 
-      while (items.length < 10) {
-        items.push('Option Name');
-      }
+            while (items.length < 10) {
+            items.push('Option Name');
+            }
 
-      scope._randomIcon = function() {
-        return icons[parseInt(icons.length * Math.random())];
-      };
+            scope._randomIcon = function() {
+            return icons[parseInt(icons.length * Math.random())];
+            };
 
-      scope.items = items;
-
+            scope.items = items;
     })(document.querySelector('#connect'));
   </script>
 

@@ -9,20 +9,20 @@
   "author": "Ashutosh Mishra [NNG44]",
   "license": "MIT",
   "dependencies": {
-    "body-parser"	: "1.15.0",
-    "cookie-parser"	: "^1.4.3",
-    "express"		: "3.3.8",
-    "fs"			: "0.0.2",
-    "multer"		: "^1.1.0",
-    "nodemon"		: "^1.9.2",
-    "path"			: "^0.12.7",
-    "request"		: "^2.69.0",
-    "util"			: "^0.10.3",
+    "body-parser": "1.15.0",
+    "cookie-parser": "^1.4.3",
+    "events": "",
+    "express": "3.3.8",
     "express-session": "1.13.0",
+    "formidable": "",
+    "fs": "0.0.2",
+    "multer": "^1.1.0",
     "node-rest-client": "^1.8.0",
-    "phantomjs"     : "",
-    "formidable"    : "",
-    "nodemailer"    : "",
-    "events"        : ""
+    "nodemailer": "",
+    "nodemon": "^1.9.2",
+    "path": "^0.12.7",
+    "phantomjs": "^2.1.7",
+    "request": "^2.69.0",
+    "util": "^0.10.3"
   }
 }

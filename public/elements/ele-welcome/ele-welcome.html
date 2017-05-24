@@ -8,9 +8,12 @@
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="ele-welcome">
   <template>
@@ -25,6 +28,10 @@
       }
     </style>
     <style is="custom-style">
+        .flex-wrap{
+            @apply(--layout-horizontal);
+            @apply(--layout-wrap);
+        }
         .flex-equal-justified {
                 @apply(--layout-horizontal);
                 @apply(--layout-justified);
@@ -37,50 +44,55 @@
                 vertical-align: middle;
         }
         .c-read { color: var(--google-blue-500); }
+        paper-card{
+            margin-right:10px;
+            margin-bottom: 10px;
+        }
+        paper-material.welcomeBoard{
+            padding:20px;
+        }
     </style>
 
-        <h1 class="page-title" tabindex="-1">{{greeting}}</h1>
-        <div class="container flex-equal-justified">
-                <div>
-                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="1: Choose" elevation="1">
-                                  <div class="card-content">
-                                          <div class="c-header">Choose</div>
-                                          <p class="c-desc">
-                                              {{description}}
-                                          </p>
-                                  </div>
-                                  <div class="card-actions">
-                                          <paper-button class="c-read">Read More ... </paper-button>
-                                  </div>
-                        </paper-card>
+        <!-- AJAX Component -->
+        <iron-ajax
+            id="ajax"
+            method="GET"
+            handle-as="json"
+            on-response="_ajaxResponse"
+            on-error="_ajaxError"
+            >
+        </iron-ajax>
+
+        <!-- Web Element to Rendor -->
+        <paper-material class="welcomeBoard" elevation="0">
+            <template is="dom-repeat" items="{{homescrObj}}" as="page">
+
+                <!-- page greeting -->
+                <h1 class="page-title" tabindex="-1">{{page.greeting}}</h1>
+                <!-- Contents for homescreen -->
+                <div class="container flex-wrap">
+                        <template is="dom-repeat" items="{{page.tiles}}" as="tile">
+                            <div class="flex">
+                                    <paper-card heading="{{tile.heading}}" image="{{tile.headerImage}}" alt="{{tile.headerTitle}}" elevation="1">
+                                              <div class="card-content">
+                                                    <div class="c-header"> {{tile.Title}} </div>
+                                                    <p class="c-desc">
+                                                        {{tile.description}}
+                                                    </p>
+                                              </div>
+                                              <div class="card-actions">
+                                                    <paper-button class="c-read" on-tap="_openStory"> Read More </paper-button>
+                                                    <iron-collapse id="story" style="width:100%;">
+                                                        {{tile.story}}
+                                                    </iron-collapse>
+                                              </div>
+                                    </paper-card>
+                            </div>
+                        </template>
                 </div>
-                <div>
-                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="2: Pursue" elevation="1">
-                                  <div class="card-content">
-                                          <div class="c-header">Pursue</div>
-                                          <p class="c-desc">
-                                              {{description}}
-                                          </p>
-                                  </div>
-                                  <div class="card-actions">
-                                          <paper-button class="c-read">Read More ... </paper-button>
-                                  </div>
-                        </paper-card>
-                </div>
-                <div>
-                        <paper-card image="C:\Users\Ashutosh Mishra\Pictures\village-child.jpg" alt="3: Success" elevation="1">
-                                  <div class="card-content">
-                                          <div class="c-header">Success</div>
-                                          <p class="c-desc">
-                                              {{description}}
-                                          </p>
-                                  </div>
-                                  <div class="card-actions">
-                                          <paper-button class="c-read">Read More ... </paper-button>
-                                  </div>
-                        </paper-card>
-                </div>
-        </div>
+
+            </template>
+        </paper-material>
 
 
 
@@ -96,14 +108,49 @@
         properties: {
                 greeting: {
                     type: String,
-                    value: 'Welcome! This is ele-welcome.',
+                    value: 'Homescreen',
                     notify: true
                 },
-                description:{
+                apiServer:{
                         type: String,
-                        value: 'Description of the title header.',
+                        value: 'http://192.168.11.111:10000/api/v1/getHomeScreenContent',
+                },
+                homescrObj:{
+                        type: Array,
+                        value: function(){ return []; },
+                        notify: true
                 }
+        },
+
+        _openStory: function(obj){
+            //Opening the story relativly vai the following path.
+            //console.log(obj.path[1].childNodes[3]);
+            obj.path[1].childNodes[3].toggle();
+        },
+        attached: function(){
+            //Call the AJAX and get the result.
+            this.$.ajax.url = this.apiServer;
+            this.$.ajax.method = 'GET';
+            this.$.ajax.generateRequest();
+        },
+        _ajaxError: function(err){
+            console.log(err);
+        },
+        _ajaxResponse: function(resObj){
+            //console.dir(resObj);
+            console.info('Response arrived.');
+            console.dir(resObj.detail.response);
+            this.homescrObj = resObj.detail.response;
+        },
+        ready: function(){
+            //Sample Data brfore real data.
+            this.homescrObj = [{
+                "greeting":"Loading contents...",
+                "tiles":[{}]
+            }];
+
         }
+
       });
     })();
   </script>
