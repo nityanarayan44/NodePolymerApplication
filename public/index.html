@@ -1,6 +1,6 @@
 <!--
 @Author: Nitya Narayan Gautam [Ashutosh Mishra]
-@Desc: A very basic Layout structure for application.
+@Desc: Layout structure for application.
 -->
 
 <!doctype html>
@@ -9,13 +9,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-  <title> NNG-NODE </title>
+  <title>CONNECT</title>
 
 <!-- Files import -->
   <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
   <link rel="import" href="/bower_components/font-roboto/roboto.html">
   <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+  <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
   <link rel="import" href="/bower_components/iron-icons/social-icons.html">
   <link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
   <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
@@ -27,8 +28,9 @@
   <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
   <link rel="import" href="/bower_components/app-layout/demo/sample-content.html">
 
-  <!-- Including costom elements -->
-  <link rel="import" href="./elements/elements.html">
+  <!-- Elements -->
+  <link rel="import" href="/elements/elements.html">
+
   <style is="custom-style">
 
     body {
@@ -65,6 +67,9 @@
     .appTitle{
             font-size: 1.5rem;
     }
+    iron-pages{
+        padding: 10px;
+    }
 
   </style>
 </head>
@@ -76,7 +81,7 @@
     <app-header fixed effects="waterfall">
       <app-toolbar>
         <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
-        <div class="appTitle" main-title> ~~~~ [<iron-icon icon="social:whatshot" item-icon></iron-icon>]</div>
+        <div class="appTitle" main-title> CONNECT [<iron-icon icon="social:whatshot" item-icon></iron-icon>]</div>
         <!-- <paper-icon-button id="more" icon="more-vert"></paper-icon-button> -->
       </app-toolbar>
     </app-header>
@@ -85,40 +90,66 @@
 
       <app-drawer>
         <div class="drawer-content">
-          <paper-icon-item>
-            <iron-icon icon="inbox" item-icon></iron-icon> <span>Inbox</span>
+          <paper-icon-item onclick="_doSelectDailyboard()">
+            <iron-icon icon="inbox" item-icon></iron-icon> <span> DAILY BOARD </span>
           </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="query-builder" item-icon></iron-icon> <span>Snoozed</span>
+          <paper-icon-item onclick="_doSelectTime()">
+            <iron-icon icon="query-builder" item-icon></iron-icon> <span> CLOCK </span>
           </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="done" item-icon></iron-icon> <span>Done</span>
+          <paper-icon-item onclick="_doSelectAnalytics()">
+            <iron-icon icon="done" item-icon></iron-icon> <span> ANALYTICS REPORT </span>
           </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="drafts" item-icon></iron-icon> <span>Drafts</span>
+          <paper-icon-item onclick="_doSelectPolling()">
+            <iron-icon icon="social:poll" item-icon></iron-icon> <span> POLLING </span>
           </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="send" item-icon></iron-icon> <span>Sent</span>
+          <paper-icon-item onclick="Javascript: alert('Not Available Yet...In Progress');">
+            <iron-icon icon="notification:event-note" item-icon></iron-icon> <span> EVENTS </span>
           </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="delete" item-icon></iron-icon> <span>Trash</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="report" item-icon></iron-icon> <span>Spam</span>
+          <paper-icon-item onclick="_doSelectExtra()">
+            <iron-icon icon="code" item-icon></iron-icon> <span> Experiments </span>
           </paper-icon-item>
         </div>
       </app-drawer>
 
       <!-- Element in main view -->
-            <!-- <sample-content size="100"></sample-content> -->
-            <!-- <nng-upload></nng-upload> -->
-            <ele-welcome></ele-welcome>
+                    <iron-pages id="pages" selected="1">
+
+                            <!-- 0: Welcome Board -->
+                            <nng-welcome></nng-welcome>
+
+                            <!-- 1: Notifications -->
+                            <nng-time></nng-time>
+
+                            <!-- 2: All Teams -->
+                            <nng-team-dashboard></nng-team-dashboard>
+
+                            <!-- 4: Polling -->
+                            <nng-form></nng-form>
+
+                            <!-- 5: Experiments -->
+                            <nng-connect-experiments></nng-connect-experiments>
+
+                    </iron-pages>
+                                <!-- <sample-content size="100"></sample-content> -->
+                                <!-- <nng-newshub size="10"></nng-newshub> -->
 
     </app-drawer-layout>
 
   </app-header-layout>
 
   <script>
+/*
+    Handling selection.
+*/
+    function _doSelectDailyboard(){ document.getElementById('pages').selected = 0; }
+    function _doSelectTime(){ document.getElementById('pages').selected = 1; }
+    function _doSelectAnalytics(){ document.getElementById('pages').selected = 2; }
+    function _doSelectPolling(){ document.getElementById('pages').selected = 3; }
+    function _doSelectExtra(){ document.getElementById('pages').selected = 4; }
+
+/*
+    Handling side panel.
+*/
     var drawerLayout = document.getElementById('drawerLayout');
     //Initially close the drawer.
     drawerLayout.forceNarrow = true;
@@ -136,18 +167,19 @@
     */
     (function(scope) {
             var title = 'CONNECT';
-            var items = [];
-            var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
+      var items = [];
+      var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
 
-            while (items.length < 10) {
-            items.push('Option Name');
-            }
+      while (items.length < 10) {
+        items.push('Option Name');
+      }
 
-            scope._randomIcon = function() {
-            return icons[parseInt(icons.length * Math.random())];
-            };
+      scope._randomIcon = function() {
+        return icons[parseInt(icons.length * Math.random())];
+      };
 
-            scope.items = items;
+      scope.items = items;
+
     })(document.querySelector('#connect'));
   </script>
 

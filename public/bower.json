@@ -1,16 +1,16 @@
 {
-  "name": "NNG44-Polymer-Workshop",
+  "name": "CONNECCT",
   "main": "index.html",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage": "",
   "authors": [
     "Nitya Narayan Gautam <nityanarayan44@live.com>"
   ],
   "keywords": [
-	"polymer",
-	"NNG44-APPLICATION",
-	"web components",
-	"socketio"
+    "polymer",
+    "CONNECT-APPLICATION",
+    "web components",
+    "socketio"
   ],
   "license": "MIT",
   "ignore": [
@@ -21,10 +21,12 @@
     "tests"
   ],
   "dependencies": {
-	"polymer": "Polymer/polymer#^1.0.0",
-	"paper-elements": "PolymerElements/paper-elements#^1.0.0",
-	"iron-elements":"PolymerElements/iron-elements#^1.0.0",
-	"platinum-sw":"PolymerElements/platinum-sw",
-	"app-layout":"PolymerElements/app-layout"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "platinum-sw": "PolymerElements/platinum-sw",
+    "iron-grid": "*",
+    "paper-datatable": "^0.9.8",
+    "google-chart": "^1.1.2"
   }
 }

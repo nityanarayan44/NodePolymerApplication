@@ -16,6 +16,7 @@
     "express-session": "1.13.0",
     "formidable": "",
     "fs": "0.0.2",
+    "jsonfile": "^3.0.0",
     "multer": "^1.1.0",
     "node-rest-client": "^1.8.0",
     "nodemailer": "",
