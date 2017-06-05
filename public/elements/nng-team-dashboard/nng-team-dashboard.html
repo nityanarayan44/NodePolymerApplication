@@ -1,0 +1,603 @@
+<!--
+@author: Ashutosh Mishra, BIT Mesra
+@Desc : Organisation Team dashboard
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- Custom Element -->
+<link rel="import" href="../../bower_components/paper-datatable/paper-datatable.html">
+<link rel="import" href="../../bower_components/iron-grid/iron-grid.html">
+<!-- Paper Material -->
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<!-- Layout -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="nng-team-dashboard">
+    <!-- Starting template -->
+    <template>
+
+        <style>
+            :host{
+                display: block;
+                font-family: Roboto;
+                font-size: 1rem;
+                color: black;
+                width: inherit;
+                height: inherit;
+                @apply(--nng-team-dashboard);
+            }
+
+            google-chart {
+                margin-top: 20px;
+                width           : inherit;
+                height          : inherit;
+                position        : relative;
+            }
+            paper-card{
+                width:100%;
+                padding: 10px;
+                color: white;
+            }
+            paper-material{
+                width:100%;
+                height:100%;
+                text-align: center;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                background-color: white;
+                overflow: hidden;
+                overflow-x: scroll;
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                @apply(--nng-team-dashboard-paper-material);
+            }
+            paper-material::-webkit-scrollbar{
+            	width: 3px;
+            }
+
+            .counter_values {
+                font-size   : 5em;
+                font-weight : 300;
+                color       : #2196F3;
+                text-align  : center;
+                margin-top: -20px;
+                @apply(--nng-team-dashboard-counter-value);
+            }
+            .counterValue{
+                font-size: 2rem;
+                margin-right: -17px;
+            }
+            .counterValueof{
+                font-size: 0.3em;
+                font-weight: 300;
+                color: #2196F3;
+                top: inherit;
+                @apply(--nng-team-dashboard-counter-value-of);
+            }
+
+            .counter_lbl{
+                height: 30px;
+                max-height: 40px;
+                font-size: 0.9em;
+                font-weight:lighter;
+                @apply(--nng-team-dashboard-counter-label);
+            }
+            .reportBanner{
+                    font-weight:lighter;
+            }
+            .counter_unit{
+                color: #2196F3;
+                font-size: 0.8em;
+                font-weight:lighter;
+                @apply(--nng-team-dashboard-counter-unit);
+            }
+            /* DIV/Card with All screen sizes */
+            .graphbox {
+                padding: 3px;
+                background: transparent;
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                @apply(--nng-team-dashboard-graph);
+            }
+
+            .user-dialog{
+                min-width: 70%;
+                border-style: solid;
+                border-width: 1px;
+                border-color: cyan;
+            }
+            table.discTbl{
+                    width:100%;
+                    padding:0;
+                    spacing: 0;
+            }
+            .discTblHeader{
+                    background-color: #ccc;
+                    border-style: none;
+                    border-bottom-style: solid; border-bottom-width: 1px;
+            }
+
+            td{
+                    border-style: none;
+                    border-bottom-style: solid; border-bottom-width: 1px;
+            }
+            .discArea, paper-material.dataTable{
+                    text-align: left;
+                    align-content: flex-start;
+                    align-items: flex-start;
+            }
+            .discRow{
+                    border-style: solid;
+                    border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: black;
+            }
+
+            .hh {
+                font-weight: bold;
+                font-size: 1.5em;
+                background-color: lightgray;
+            }
+        @media print {
+                #uploadBtn * { display:none; }
+                paper-material {
+                        border-radius: 3px;
+                        border-style: solid;
+                        border-width: 1px;
+                        border-color: inherit;
+                        box-shadow: none;
+                }
+        }
+        </style>
+
+        <!-- Setting Iron ajax and calling an API to get data -->
+        <iron-ajax
+            id="ajax"
+            url="http://localhost:10000/api/v1/getMemberData"
+            handle-as="json"
+            method="GET"
+            on-response="_onResponse"
+            on-error="_onError"
+            timeout="60000">
+        </iron-ajax>
+
+<!-- File Upload UI Part.
+------------------------------------------------------>
+        <!-- Upload Section -->
+        <!-- <div id="uploadBtn">
+                <paper-icon-button icon="icons:cloud-upload" data-dialog="modal" onclick="auth.open()" TITLE="Upload Cucmber json report file to generate intractive REPORT and take a print out."></paper-icon-button>
+                <span>Upload Members JSON file.</span>
+                <button onclick="window.print();">Print Now</button>
+        </div>
+        <paper-dialog id="auth" class="user-dialog" alwaysOnTop="true">
+                <h2> Upload your Cucumber Json report file here... </h2>
+                <input type="file" name="file" id="file"/>
+                <div class="buttons">
+                        <paper-button dialog-cancel> CANCEL </paper-button>
+                        <paper-button  dialog-confirm autofocus on-click="_checkFile" raised> GENERATE REPORT </paper-button>
+                </div>
+        </paper-dialog> -->
+
+<!-- Report Generation part.
+Main Content of Element will render here.
+------------------------------------------------------>
+
+        <iron-grid id="printarea">
+
+                <!-- Header/Banner for Report. -->
+                <!-- <template is="dom-if" if="[[isReportReady]]">
+                        <paper-material>
+                                <div class="reportBanner"> MINDFIRE MANPOWER ANALYSIS</div>
+                        </paper-material>
+                </template> -->
+
+                <!-- Total Report area. -->
+                        <!-- dom repeat -->
+                        <template is="dom-repeat" items="{{d}}" as="arr" index-as="i">
+
+                                <!-- Render a lebel card -->
+                                <template is="dom-if" if="[[isLabelType(arr)]]">
+                                    <div class$="graphbox [[setLayout(arr)]]">
+                                        <paper-card elevation=[[elevation]] style=" background-color: [[arr.data.0.color]]">
+                                                <div class="reportBanner"> [[arr.data.0.label]] </div>
+                                        </paper-card>
+                                    </div>
+                                </template>
+                                <!--
+                                Dom if, Rendering Counter type
+                                ------------------------------------------------->
+                                <template is="dom-if" if="[[isCounterType(arr)]]">
+                                        <div class="graphbox xl4 l4 m4 s6 xs12">
+                                                <paper-material id="ppr-card" elevation="[[elevation]]">
+
+                                                        <!-- counter label -->
+                                                        <div class="counter_lbl"><font color="[[arr.data.0.color]]"> [[arr.data.0.label]] </font></div>
+
+                                                        <!-- Value /of -->
+                                                        <div class="counter_values">
+                                                            <span class="counterValue" style="color:[[arr.data.0.color]];">[[arr.data.0.value]]</span>
+                                                            <span class="counterValueof">[[isValOf(arr.data.0.of)]]</span>
+                                                        </div>
+
+                                                        <!-- Couter Graph title -->
+                                                        <div class="counter_unit"> [[arr.data.0.unit]] </div>
+
+                                                </paper-material>
+                                        </div>
+                                </template>
+
+                                <!--
+                                Dom if, Rendering Google chart
+                                ------------------------------------------------->
+                                <template is="dom-if" if="[[isGraphType(arr)]]">
+                                        <div class="graphbox xl12 l12 m12 s12 xs12">
+                                                <paper-material elevation="[[elevation]]">
+                                                        <!-- Simple Google chart. -->
+                                                        <google-chart
+                                                                id   = "gChart"
+                                                                type = "[[arr.type]]"
+                                                                data = '[[arr.data]]'
+                                                                options ='[[setGraphOption(arr)]]'>
+                                                        </google-chart>
+                                                </paper-material>
+                                        </div>
+                                </template> <!-- Google Chart Template -->
+
+                        </template><!-- End of [dom-repeat] data repeat template -->
+        </iron-grid>
+
+        <!--TODO: Toast, If Ajax call fails. -->
+        <paper-toast id="toast">
+          <!-- <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">CLOSE</span> -->
+        </paper-toast>
+
+</template>
+
+<script>
+    Polymer({
+        is: 'nng-team-dashboard',
+
+//** Element Properties
+        properties:{
+                //property which holds raw data either from an API or from an uploaded json file.
+                dataObj:{
+                    type: Object,
+                    value: function(){ return {};},
+                    notify: true
+                },
+                /* Array contains all the data to be rendered finally. */
+                d:{
+                        type: Array,
+                        value: function(){ return []; },
+                        notify: true
+                },
+                /* Property for paper card elevation(box-shadow) from outside */
+                elevation:{
+                    type: Number,
+                    value: 1
+                },
+
+                isReportReady:{
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                },
+                isTableReady:{
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                },
+                /* JSON Report File Data */
+                jsonObject:{
+                        type: Array,
+                        value: function(){ return []; },
+                        notify:true
+                },
+                /* Tests/Steps data. */
+                stepsTable:{
+                        type: Array,
+                        value: function(){ return []; },
+                        notify:true
+                },
+
+                /* Vars for employees */
+                total : { type: Number, value: 0, notify:true },
+                working : { type: Number, value: 0, notify:true },
+                notwrkg : { type: Number, value: 0, notify:true },
+                totalSr : { type: Number, value: 0, notify:true },
+                totalTr : { type: Number, value: 0, notify:true },
+                totalIr : { type: Number, value: 0, notify:true },
+                center1 : { type: Number, value: 0, notify:true }, //For Noida/Delhi
+                center2 : { type: Number, value: 0, notify:true }, //For Bhuwaneshwar
+                center3 : { type: Number, value: 0, notify:true }, //For Banglore
+                develop : { type: Number, value: 0, notify:true },
+                testers : { type: Number, value: 0, notify:true },
+                othters : { type: Number, value: 0, notify:true },
+                yearlyRecruitementData: {type: Array, value: function(){ return [];}, notify: true},
+
+
+	    /* Property for Google chart customization */
+            //Available OPTIONS
+            graphOption:{
+                type: Object,
+                readOnly: true,
+                value: function(){
+                                return {
+                                        lineSize:2,
+                                        pieHole: 0.5,
+                                        backgroundColor: {stroke:null, fill:'transparent', strokeSize: 1},
+                                        title: "My Graph",
+                                        legend: { position: "bottom" },
+                                        chartArea:{left:0,top:0,right:0,height:"85%",width:"100%"},
+                                        curveType: "function",
+                                        colors: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'],
+                                        animation:{duration: 1000,easing: 'out'},
+                                        hAxis: { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0} },
+                                        vAxis: { titleTextStyle: {color: '#333'}, minValue: 0, gridlines: {color: '#f3f3f3',count: 0}}
+                                };
+                }
+            }
+        },
+
+
+        //Functions in case.
+        //===[Checking types.]===================
+        isGraphType: function(arr){
+            return (arr.type !== 'counter' && arr.type !== 'label')? true : false ;
+        },
+        isCounterType: function(arr){
+            return (arr.type === 'counter')? true : false ;
+        },
+        isLabelType: function(arr){
+            return (arr.type === 'label')? true : false ;
+        },
+        isDesciptionType: function(arr){
+                return (arr.type === 'discription')? true : false ;
+        },
+        isValOf: function(number){
+            return (number)? '/'+number+'' : '';
+        },
+        //Set layout function.
+        setLayout: function(arr){
+            return (arr.fullWidth)? 'xl12 l12 m12 s12 xs12' : 'xl4 l4 m6 s12 xs12' ;
+        },
+
+        //Set graph Option.
+        setGraphOption: function(arr){
+
+            if(arr.option){
+                    console.log("Using API graph Options.");
+                	arr.option.legend 		= arr.option.legend || "bottom";
+            		arr.option.pieHole 		= "pieHole" in arr.option ? arr.option.pieHole : 0.8;
+            		arr.option.colors 		= "colors" in arr.option ? arr.option.colors 		: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
+            		arr.option.curveType 	= "curveType" in arr.option ? arr.option.curveType	: "function" ;                                      //Set curveType
+            		arr.option.chartArea 	= "chartArea" in arr.option? arr.option.chartArea       	: {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
+            		arr.option.hAxis 		= "hAxis" in arr.option  ? arr.option.hAxis              : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
+            		arr.option.vAxis		= "vAxis" in arr.option ? arr.option.vAxis              	: { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
+            		arr.option.animation	= "animation" in arr.option ? arr.option.animation       	: {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
+            		arr.option.backgroundColor      = "backgroundColor" in arr.option ? arr.option.backgroundColor : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
+            		//finally return the changes.
+            		return arr.option;
+            }else{
+                console.log("Using default graph Options.");
+		        return this.graphOption;
+	        }
+		//return this.graphOption;
+        },
+
+        _checkFile: function(){
+
+                        //Crearing old data.
+                        this.jsonObject = [];
+
+                        //Reading File
+                        var reader = new FileReader();
+                        var self = this;
+
+                        //Reading File
+                        // Closure to capture the file information.
+                        reader.onload = (function(theFile) {
+                                                return function(e) {
+                                                        JsonObj = JSON.parse(e.target.result);
+                                                        //For Global use.
+                                                        self.push('jsonObject', JsonObj);
+                                                        self._update();
+                                                };
+                        })(this.$.file.files[0]);
+
+                        //OnError [When file reader is unable to read file]
+                        //reader.onerror = (function(e){console.dir(e);})();
+
+                        // Read in the image file as a text.
+                        reader.readAsText(this.$.file.files[0]);
+
+        },
+
+        _render: function() {
+                    //Enabling Report Banner/Header.
+                    this.isReportReady = true;
+                    //DEFINING SOME values.
+                    var years = ["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017"];
+                    var position = ["lead", "executive", "software engineer", "test", "manager", "trainee", "intern"];
+
+                    //Variables for Graph options [for customisation purpose]
+                    var lineGraphOptions = {
+                                animation : {duration: 1000,easing: 'out',"startup": true},
+                				lineSize:1,
+                				title: "Current Status",
+                				legend: { position: "bottom" },
+                				chartArea:{width:"80%", height:"90%"},
+                				curveType: "function",
+                				colors: ['darkcyan', 'black', 'darkred', '#f3b49f', '#f6c7b6'],
+                				is3D: false,
+                				backgroundColor: {stroke:null, fill:'#FFF', strokeSize: 0},
+                				hAxis : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 5}, format: '####' },
+                				vAxis : { minValue: 0, gridlines: {color: '#f3f3f3'}}
+                        },
+                        columnGraphOptions = {
+                            animation : {duration: 1000,easing: 'out',"startup": true},
+                            title: 'Menpower Status',
+                            chartArea:{width:"80%", height:"80%"},
+                            bar: {groupWidth: "45%"},
+                            legend: { position: "none" },
+                        },
+                        pieGraphOptions = {
+                                animation : {duration: 1000,easing: 'out',"startup": true},
+                                title: 'People ',
+                                curveType: "function",
+                                legend: { position: "bottom" },
+                                chartArea:{width:"80%", height:"90%"},
+                                pieHole: 0.5,
+                                colors: ['darkgreen', 'darkred', 'darkgray']
+                        };
+
+                        //Counter Variables
+                        var total = (this.jsonObject[0].members).length,
+                            totalNotUpdatedProfiles = 0,
+                            totalHRExecutive = 0,
+                            totalProjectLead = 0,
+                            totalManager = 0,
+                            totalPermanentEngineers = 0,
+                            totalTrainee = 0,
+                            totalIntern = 0,
+                            totalWorking = 0,
+                            totalNotWorking = 0,
+                            totalInQA = 0,
+                            totalInDev=0,
+                            totalInOther=0,
+                            totalInDelhi=0,
+                            totalInBhu=0,
+                            totalInBng=0;
+
+                        //Graph variable Array of array
+                        var yearlyRecruitementData = [];
+
+                //Processing the recieved now data.
+                        (this.jsonObject[0].members).
+                        forEach(function(record){
+
+                                //Checking for Working, not working
+                                if ( record.head !== "" && (record.email.length !== 0 || record.email !=="") ) {
+                                        //counter variable increment for total working employees
+                                        totalWorking++;
+
+                                        //Checking for Exp level [QA, Developer, Mgt, Sr, Trainee, Intern]
+                                        if (record.designation !== "" || record.designation !== " ") {
+
+                                            //Counting people as per expiriance category.
+                                            if ( record.designation.toLowerCase().indexOf("trainee") > -1 ) {totalTrainee++; }
+                                            else if ( record.designation.toLowerCase().indexOf("intern") > -1 ) { totalIntern++; }
+                                            else if ( record.designation.toLowerCase().indexOf("hr executive") > -1 ) { totalHRExecutive++; }
+                                            else if ( record.designation.toLowerCase().indexOf("lead") > -1 ) { totalProjectLead++; }
+                                            else if ( record.designation.toLowerCase().indexOf("manager") > -1 ) { totalManager++; }
+                                            else{ totalPermanentEngineers++; }
+
+                                            //Counting people on each center
+                                            if ( record.center.toLowerCase().indexOf("delhi") > -1 ) { totalInDelhi++; }
+                                            else if ( record.center.toLowerCase().indexOf("bhubaneswar") > -1 ) { totalInBhu++; }
+                                            else if ( record.center.toLowerCase().indexOf("bangalore") > -1 ) { totalInBng++; }
+                                        }
+                                }
+                                else {
+                                    //counter variable increment for total notworking employees
+                                    totalNotWorking++;
+                                    //console.log("EID: " + record.eid + ", Name: " + record.name + ", Email: " + record.email + ", Head: " + record.head);
+                                }
+                        });
+
+                //Finally Adding the data to main variable which will render.
+
+                                //Adding graph. and counters.
+                                this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'MINDFIRE MENPOWER ANALYTICS REPORT (data from GPS)', 'color':'#2196F3'} ] });
+                                        //For the working menpower status.
+                                        this.push('d', {"id":"pieChart","type":"pie", 'option':pieGraphOptions, 'fullWidth':true,  "data":[ ["STATUS","VALUE"],["WORKING",totalWorking],["NOT WORKING",totalNotWorking] ],"width":'4' } );
+                                        //Year wise recruitement chart
+                                        this.push('d', {"id":"pieChart","type":"column", 'option':lineGraphOptions, 'fullWidth':true,  "data":[ ["STATUS","VALUE", { role: 'style' }],["WORKING",totalWorking, 'color: darkcyan'],["NOT WORKING",totalNotWorking, 'color: grey'] ],"width":'2' } );
+
+                                //Persons overview
+                                this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'Persons (data from GPS)', 'color':'#2196F3'} ] });
+                                        //Counter graph for total Employee
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':true, 'data': [ {'label':'TOTAL', 'value': total, 'unit':'PERSON', 'color':'#2196F3'} ] });
+                                        //Counter graph for total Working Employee
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'WORKING', 'value': totalWorking, 'unit':'PERSON', 'color':'#2196F3'} ] });
+                                        //Counter graph for total Not Working Employee
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'NOT-WORKING', 'value': totalNotWorking, 'unit':'PERSON', 'color':'#ccc'} ] });
+
+                                //Counters for peoples in various positions
+                                this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'Persons in various category (data from GPS)', 'color':'#2196F3'} ] });
+                                        //Counter for hr_executive
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'HR Executive', 'value': totalHRExecutive, 'of':totalWorking, 'unit':'PERSON', 'color':'#0F3'} ] });
+                                        //Counter for  managers
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'MANAGERs', 'value': totalManager, 'of':totalWorking, 'unit':'PERSON', 'color':'#0F0'} ] });
+                                        //Counter for leads
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'PROJECT LEADs', 'value': totalProjectLead, 'of':totalWorking, 'unit':'PERSON', 'color':'#0F0'} ] });
+                                        //Counter for leads
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'PERMANENT ENGINEERs', 'value': totalPermanentEngineers, 'of':totalWorking, 'unit':'PERSON', 'color':'#0F0'} ] });
+                                        //Counter graph for total Trainee.
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'TRAINEE', 'value': totalTrainee, 'of':totalWorking, 'unit':'PERSON', 'color':'#F00'} ] });
+                                        //Counter graph for total Interns.
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'INTERN', 'value': totalIntern, 'of':totalWorking, 'unit':'PERSON', 'color':'#0FA'} ] });
+
+                                //Counters for peoples in various center
+                                this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'Persons in various centers (data from GPS)', 'color':'#2196F3'} ] });
+                                        //Counter graph for total Interns.
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'DELHI/NOIDA', 'value': totalInDelhi, 'of':totalWorking, 'unit':'PERSON', 'color':'#0FA'} ] });
+                                        //Counter graph for total Interns.
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'BHUWANESHWAR', 'value': totalInBhu, 'of':totalWorking, 'unit':'PERSON', 'color':'#0FA'} ] });
+                                        //Counter graph for total Interns.
+                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'BANGALORE', 'value': totalInBng, 'of':totalWorking, 'unit':'PERSON', 'color':'#0FA'} ] });
+        },
+
+        /* When User upload a file then call this function. */
+        _update: function(){
+                console.log("Uploaded File: "+  this.$.file.files[0].name );
+                console.log("File Rendered....");
+                //Logging uploaded JSON File data
+                //console.log(this.jsonObject);
+
+                //A file is uploaded for rendering, so clean the old report first.
+                this._render();
+        },
+
+        //IRON-AJAX Response
+        _onResponse: function(e, resp){
+            console.log('Ajax Response: ');
+            this.jsonObject = (resp.response);
+            console.dir(this.jsonObject);
+
+            //Render now
+            this._render();
+        },
+        //IRON-AJAX Error
+        _onError: function(error){
+        	// TODO: Just show the error message, or we can retry here also.
+            console.log("Ajax failure, Response error: ");
+            console.dir("Error: " + error);
+            //this.$.toast.text=" Failed ";
+            //this.$.toast.show();
+    	},
+        attached: function(){
+            //Setting Ajax Url
+            this.$.ajax.url = "/api/v1/getTeam";
+
+            //logging.
+            console.log("Calling API at the Address >>>>>>>>", this.$.ajax.url);
+
+            //Setting up ajax method.
+            this.$.ajax.method = "GET";
+
+            //now calling AJAX
+            this.$.ajax.generateRequest();
+
+        }//End of Attach.
+
+    });
+
+</script>
+</dom-module>

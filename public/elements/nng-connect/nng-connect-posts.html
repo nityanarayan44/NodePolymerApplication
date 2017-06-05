@@ -1,0 +1,185 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 07-FEB-2017
+@Desc: List all public post and also create a new one.[posts element]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="nng-connect-posts">
+
+        <template>
+                <style include="shared-styles">
+                        .postCard{
+                                padding: 10px;
+                                font-family: 'Roboto', 'roboto';
+                                background-color: #FFF;
+                                width: auto;
+                                color: #000;
+                                margin: 10px;
+                                overflow: hidden;
+                                /*font-size: 1rem;*/
+                        }
+                        #bg{
+                                font-size: 2rem;
+                                top:100px;
+                                left: 10%;
+                                z-index: -1;
+                                opacity: 0.7;
+                        }
+                        .CONNECT-PEOPLE{
+                                height: 3rem; width: 3rem;
+                                color: var(--google-red-500);
+                        }
+                        paper-fab{
+                                background-color: var(--google-red-500);
+                                position: fixed;
+                                bottom: 0; right: 0;
+                                margin: 10px;
+                        }
+
+                        paper-dialog{
+                                min-width: 70%;
+                                align-items: flex-start;
+                                text-align: left;
+                                padding: 0;
+                                border-radius: 3px;
+                                border-style: solid;
+                                border-width: 0.5px;
+                                border-color: var(--google-red-500);
+                        }
+                        paper-card{
+                                padding: 0;
+                                margin: 0;
+                                width: 100%;
+                        }
+                        paper-material{
+                                color: black;
+                        }
+                        paper-progress{
+                                width: auto;
+                                height:5px;
+                                --paper-progress-active-color: var(--google-red-500);
+                        }
+                        paper-button.Ppr-Btn{
+                                border-style: solid;
+                                border-width: 1px;
+                                border-color: var(--google-red-500);
+                                color: var(--google-red-500);
+                        }
+                </style>
+
+                <!-- Post Cards -->
+                        <div id="postCardsArea">
+                                <template is="dom-repeat" items="[[messageObj.messages]]" as="message" index-as="i">
+                                        <paper-material elevation='1' class="postCard">
+                                                <p style="font-size:10px;"> [[message.post]] </p>
+                                        </paper-material>
+                                </template>
+                        </div>
+
+                <!-- Post dialog -->
+                        <paper-dialog id="modal">
+
+                                <paper-card heading="NEW POST" alt="New Post">
+                                        <paper-progress value="0"></paper-progress>
+                                        <div class="card-content">
+                                                <paper-input
+                                                        id="chatText"
+                                                        tabindex="0"
+                                                        class="querytextarea"
+                                                        label="Write here..."
+                                                        value="{{post}}"
+                                                        maxlength="100"
+                                                        on-keydown="_handleEnterKey"
+                                                        auto-validate
+                                                        char-counter
+                                                        no-label-float>
+                                                                <!-- <paper-icon-button suffix on-click="_handleSend" icon="send" alt="Send" title="Send"></paper-icon-button> -->
+                                                </paper-input>
+                                        </div>
+                                        <div class="card-actions">
+                                                <paper-button class="Ppr-Btn" on-click="_closePostDialog"> Cancel </paper-button>
+                                                <paper-button class="Ppr-Btn" on-click="_handlePost" autofocus> POST NOW </paper-button>
+                                        </div>
+                                </paper-card>
+
+                        </paper-dialog>
+
+                <!-- Button For creating new postcard -->
+                        <paper-fab id="createBtn" icon="create" title="Create new Post" on-click="_openPostDialog"></paper-fab>
+
+        </template>
+
+        <script>
+                (function() {
+                'use strict';
+
+                Polymer({
+                                is: 'nng-connect-posts',
+
+                                /*
+                                -----------------------------------
+                                Element properties.
+                                -----------------------------------
+                                */
+                                properties: {
+                                        author: {type: String, value: 'Ashutosh Mishra [NNG]'},
+                                        post: { type: String, value: '' },
+                                        messageObj:{
+                                                type: Object,
+                                                value: function(){
+                                                        return {
+                                                                'messages':[
+                                                                        {'post':"This is A Post"},
+                                                                        {'post':"This is B Post"},
+                                                                        {'post':"This is C Post"}
+                                                                ]
+                                                        }
+                                                },
+                                                notify: true
+                                        }
+                                },
+
+                                /*
+                                ------------------------------------------------
+                                Private functions
+                                ------------------------------------------------
+                                */
+                                _addPost: function(){
+                                        this.$.postCardsArea.innerHTML +='<paper-material style="font-size: 0.5em; color: #000; font-weight: lighter; ">'
+                                                                        + this.post
+                                                                        +'</paper-material>';
+                                        this.post = '';
+                                },
+                                _handlePost: function(){
+                                        /* Firing an event with post message data. */
+                                        this.fire('new-post', {post: this.post});
+                                        /* Calling post adder. */
+                                        this._addPost();
+                                        /* Closing dialog. */
+                                        this._closePostDialog();
+                                },
+                                _handleEnterKey: function(){ /* on ENTER key, call _handle post from here. */ },
+                                _openPostDialog: function() { this.$.modal.open(); },
+                                _closePostDialog: function() { this.$.modal.close(); },
+                                /*
+                                ------------------------------------------------
+                                Element events
+                                ------------------------------------------------
+                                */
+                                ready: function(){ },
+                                attached: function(){ console.log("nng-connect-post element Loaded."); }
+                        });
+                })();
+        </script>
+
+
+</dom-module>

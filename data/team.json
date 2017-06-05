@@ -1,0 +1,71 @@
+[
+    {
+        "dept":"TESTING TEAM",
+        "members":[
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. A",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. B",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. C",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. D",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. E",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. F",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+                    {
+                        "image":"./images/employee.png",
+                        "id":"100",
+                        "name":"Mr. G",
+                        "designation":"Just for fun.",
+                        "project":"",
+                        "contact":"",
+                        "about":" There is no story."
+                    },
+
+        ]
+    }
+]

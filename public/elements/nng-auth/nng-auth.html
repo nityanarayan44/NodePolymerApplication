@@ -5,7 +5,7 @@
 -->
 
 <!-- IMPORT -->
-        <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+        <!-- <script src="../../bower_components/webcomponentsjs/webcomponents-lite.js"></script> -->
         <link rel="import" href="../../bower_components/polymer/polymer.html">
         <link rel="import" href="../../bower_components/paper-card/paper-card.html">
         <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
@@ -97,11 +97,10 @@
                         },
 
                         attached: function(){
-
-                        },
-                        ready: function(){
                                 //Open auth dialog
                                 this.$.auth.open();
+                        },
+                        ready: function(){
                         }
                 });
         })();

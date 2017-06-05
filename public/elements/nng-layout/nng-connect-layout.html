@@ -1,0 +1,295 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 26-JAN-2017
+@Desc: Extra Layout for my 'Connect' app.
+-->
+
+<!-- IMPORT -->
+        <link rel="import" href="../../bower_components/polymer/polymer.html">
+        <link rel="import" href="../../bower_components/font-roboto/roboto.html">
+        <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
+        <link rel="import" href="../../bower_components/iron-icons/notification-icons.html">
+        <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+        <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+        <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+        <link rel="import" href="../../bower_components/paper-material/paper-material.html">
+        <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+        <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+        <link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+        <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+        <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+        <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+        <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+        <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+        <link rel="import" href="../../bower_components/app-layout/demo/sample-content.html">
+
+<!-- Element Definition -->
+<dom-module id="nng-connect-layout">
+        <template>
+
+                <!-- element style -->
+                        <style is="custom-style">
+
+                                .author{
+                                        padding: 10px;
+                                }
+
+                                body {
+                                        margin: 0;
+                                        font-family: 'Roboto', 'Noto', sans-serif;
+                                        background-color: #ccc;
+                                }
+
+                                app-header {
+                                        background-color: var(--google-red-500);
+                                        /*background-color: var(#4285f4);*/
+                                        color: #fff;
+                                }
+
+                                app-header paper-icon-button {
+                                        --paper-icon-button-ink-color: #fff;
+                                }
+
+                                app-drawer-layout {
+                                        --app-drawer-layout-content-transition: margin 0.5s;
+                                        overflow: hidden;
+                                        overflow-y: visible;
+                                }
+
+                                app-drawer {
+                                        --app-drawer-content-container: {
+                                                background-color: #eee;
+                                        }
+                                }
+
+                                paper-icon-button{
+                                        align-items: flex-start;
+                                        align-content: flex-start;
+                                        text-align: center;
+                                }
+
+                                .drawer-content {
+                                        margin-top: 80px;
+                                        height: calc(100% - 80px);
+                                        overflow: auto;
+                                }
+                                .appTitle{
+                                        font-size: 1.5rem;
+                                }
+
+                        /* IRON PAGES Styles */
+                                iron-pages {
+                                  width: 100%;
+                                  font-size: 50px;
+                                  color: white;
+                                  text-align: center;
+                                }
+
+                        /* Style Ends */
+                        </style>
+
+                <!-- Elements -->
+                        <app-header-layout id="connect">
+
+                                <!-- Application header menu bar -->
+                                <app-header fixed effects="waterfall">
+                                        <app-toolbar>
+                                                <paper-icon-button id="toggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+                                                <div class="appTitle" main-title> [[title]] </div>
+                                                <nng-user></nng-user>
+                                                <paper-icon-button id="more" icon="more-vert"></paper-icon-button>
+                                        </app-toolbar>
+                                </app-header>
+
+                                <!-- Application side-bar and workspace[side by side] -->
+                                <app-drawer-layout id="drawerLayout">
+
+                                        <!-- Application side bar[drawer menu content] -->
+                                        <app-drawer>
+                                                <div class="drawer-content">
+                                                        <!-- Logged User info -->
+                                                        <paper-icon-item on-tap="_switchTo" data-args="0">
+                                                                <iron-icon icon="inbox" item-icon></iron-icon>
+                                                                <span> DailyBoard </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-tap="_switchTo" data-args="1">
+                                                                <iron-icon icon="social:notifications" item-icon></iron-icon>
+                                                                <span> Notifications </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-tap="_switchTo" data-args="2">
+                                                                <iron-icon icon="social:person" item-icon></iron-icon>
+                                                                <span> Teams </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-tap="_switchTo" data-args="3">
+                                                                <iron-icon icon="notification:event-note" item-icon></iron-icon>
+                                                                <span> Events </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-tap="_switchTo" data-args="4">
+                                                                <iron-icon icon="social:poll" item-icon></iron-icon>
+                                                                <span> Polling </span>
+                                                        </paper-icon-item>
+
+                                                        <paper-icon-item on-tap="_switchTo" data-args="5">
+                                                                <iron-icon icon="icons:code" item-icon></iron-icon>
+                                                                <span> Experiments </span>
+                                                        </paper-icon-item>
+
+
+
+                                                        <!-- @Application Info. -->
+                                                        <paper-item>
+                                                                <hr/>
+                                                                <div class="author">
+                                                                        <paper-item-body two-line>
+                                                                                <div><code>@Author: [[about.author]] </code></div>
+                                                                                <div><code>@Project: [[about.prjName]]</code> </div>
+                                                                                <div><code>@Status: [[about.status]] </code></div>
+                                                                        </paper-item-body>
+                                                                </div>
+                                                        </paper-item>
+                                                </div>
+                                        </app-drawer>
+
+                                        <!-- Application main-workspace -->
+                                        <iron-pages id="pages" selected="2">
+
+                                                <!-- 0: Welcome Board -->
+                                                <nng-welcome></nng-welcome>
+
+                                                <!-- 1: Notifications -->
+                                                <!-- <sample-content size="5"></sample-content> -->
+                                                <nng-connect-notifications></nng-connect-notifications>
+
+                                                <!-- 2: All Teams -->
+                                                <nng-team-dashboard></nng-team-dashboard>
+
+                                                <!-- 3: Events element-->
+                                                <nng-connect-events></nng-connect-events>
+
+                                                <!-- 4: Polling -->
+                                                <!-- <nng-form></nng-form> -->
+                                                <nng-time></nng-time>
+
+                                                <!-- 5: Experiments -->
+                                                <nng-connect-experiments></nng-connect-experiments>
+
+                                        </iron-pages>
+
+                                </app-drawer-layout>
+                        </app-header-layout>
+
+                        <!-- Toaster Notification -->
+                        <paper-spinner id="wait"></paper-spinner>
+                        <paper-toast id="toast" text="WELCOME TO CONNECT."></paper-toast>
+        </template>
+        <script>
+
+                (function() {
+                        'use strict';
+
+                        Polymer({
+                        /*
+                        ------------------------------------------------------------------
+                        Registering dom-element with name 'nng-connect-layout'.
+                        ------------------------------------------------------------------
+                        */
+                                is: 'nng-connect-layout',
+
+                        /*
+                        ------------------------------------------------------------------
+                        user defined properties of dom-element.
+                        ------------------------------------------------------------------
+                        */
+                                properties: {
+                                        title:{ type: String, value: 'CONNECT' },
+                                        about:{ type: Object, value: function(){ return {author:'Ashutosh Mishra', prjName:'CONNECT', status:'in progress'}; } },
+                                        msgDataObj:{type:Object, value: function(){ return {};}, notify: true, observer: '_msgObjectChanged' },
+                                        authDataObj:{type:Object, value: function(){ return {};}, notify: true, observer: '_authObjectChanged' }
+                                },
+
+                        /*
+                        ------------------------------------------------------------------
+                        attaching listeners for dom-element [for its child elements].
+                        ------------------------------------------------------------------
+                        */
+                                listeners: {
+                                        'on-notify': 'raiseToaster',
+                                        'on-send': 'raiseSend'
+                                },
+
+                        /*
+                        ------------------------------------------------------------------
+                         functions for element nevigation using iron pages.
+                        ------------------------------------------------------------------
+                        */
+                                _switchTo: function(obj) {
+                                    var index = obj.target.getAttribute('data-args');
+                                    console.dir(obj.target.className);
+                                    if(index !== null){
+                                        this.$.pages.selected = index;
+                                        console.info('Routed to '+index+' page');
+                                    }else{
+                                        //TODO:
+                                        console.info('Opsee, OPtion is not Availble yet.');
+                                        //Sorry, Unable to load page.
+                                    }
+                                    return true;
+                                },
+
+                                menuSelection: function(){
+                                        //SELECTING PAGE AS PER MENU.[incremental]
+                                        //this.$.pages.selectNext();
+                                        //this.$.pages.selectPrevious();
+                                        this.$.pages.selected = 0;
+                                },
+                        /*
+                        ------------------------------------------------------------------
+                        User defined functions for element.
+                        ------------------------------------------------------------------
+                        */
+
+                                /* Side menu drawer toggle function. */
+                                _toggleSideMenu: function(){
+                                                this.$.toggle.addEventListener('tap', function() { if (drawerLayout.forceNarrow || !drawerLayout.narrow) { drawerLayout.forceNarrow = !drawerLayout.forceNarrow; } else { drawerLayout.drawer.toggle(); } });
+                                },
+
+                                /* On autherisation, when autherisation object changes. */
+                                _authObjectChanged: function(){
+                                                if(this.authDataObj.status && this.authDataObj.time){
+                                                        console.info(' Authentication Received...');
+                                                        console.dir(this.authDataObj);
+                                                }else{ /* BLOCK THIS DOM-ELEMENT... */ }
+                                },
+
+                                /* On Msg arrival, when a new post/message arrived */
+                                _msgObjectChanged: function(){
+                                                if(this.msgDataObj.status && this.msgDataObj.time){
+                                                        console.info(' Message Object changed...');
+                                                        console.dir(this.msgDataObj);
+                                                }else{ /* MSG Object is empty... */ }
+                                },
+                        /*
+                        ------------------------------------------------------------------
+                        dom-element event.
+                        ------------------------------------------------------------------
+                        */
+                                attached: function(){
+                                    console.log("nng-connect-layout attached.");
+                                    //Opening Toaster after attaching this component
+                                    this.$.toast.show();
+                                },
+
+                                ready: function(){
+                                        //function-call for Side Menu toggle.
+                                        this._toggleSideMenu();
+                                }
+                        });
+                })();
+
+        </script>

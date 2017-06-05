@@ -10,67 +10,85 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="nng-form">
   <template>
     <style include="shared-styles">
         :host {
+                font-size: 1rem;
                 display: block;
+                color: black;
+                width: inherit;
+                height: inherit;
         }
         paper-progress {
                 width: 100%;
         }
+
         paper-card.nngForm{
-            width: 70%;
+            width: 99%;
             min-width: 60%;
+            margin-bottom:10px;
         }
         paper-material.eleContainer{
-            padding: 10px;
+            position: relative;
+            margin: 10px;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .formTitle{
+            padding-left: 20px;
         }
     </style>
-        &nbsp;
-        <center>
-            <paper-card class="nngForm" elevation="2">
+
+        <!-- AJAX Component -->
+        <iron-ajax
+            id="ajax"
+            method="GET"
+            handle-as="json"
+            on-response="_ajaxResponse"
+            on-error="_ajaxError"
+        ></iron-ajax>&nbsp;
+
+        <!-- <center> -->
+        <paper-material elevation="0">
+                <paper-card class="nngForm" elevation="2">
                         <!-- To render the Form components -->
-                        <template is="dom-repeat" items="{{formObj}}" as="form">
+                        <template is="dom-repeat" items="{{formElementsObj}}" as="form">
                                 <!-- Form Title -->
                                 <template is="dom-if" if="[[_validateFormTitle(form.title)]]">
-                                    <h3> [[form.title]] </h3>
+                                    <h3 class="formTitle"> [[form.title]] </h3>
                                     <paper-progress value="120"></paper-progress>
                                 </template>
 
                                 <!-- Form Components -->
                                 <paper-material  class="eleContainer" elevation="0">
-                                    <!-- To render the Form element -->
-                                    <template is="dom-repeat" items="{{form.params}}" as="param">
-                                            <!-- For Input as text-->
-                                            <template is="dom-if" if="[[_validateTextType(param.type)]]">
-                                                <paper-input label="[[param.label]]" name="[[param.name]]" required></paper-input>
+                                            <!-- To render the Form element -->
+                                            <template is="dom-repeat" items="{{form.params}}" as="param">
+                                                    <!-- For Input as text-->
+                                                    <template is="dom-if" if="[[_validateTextType(param.type)]]">
+                                                        <paper-input id="[[param.id]]" label="[[param.label]]" name="[[param.name]]" value="[[param.value]]" required></paper-input>
+                                                    </template>
+
+                                                    <!-- For Input as File-->
+                                                    <template is="dom-if" if="[[_validateFileType(param.type)]]">
+                                                        <paper-input id="[[param.id]]" type="file" name="[[param.name]]" value="[[param.value]]"></paper-input>
+                                                    </template>
                                             </template>
 
-                                            <!-- For Input as File-->
-                                            <template is="dom-if" if="[[_validateFileType(param.type)]]">
-                                                <paper-input type="file" name="[[param.name]]"></paper-input>
-                                            </template>
-                                    </template>
-
-                                    <!-- Render Form Controls -->
-                                    <span style="float:right;">
-                                        <br/>
-                                        <paper-button raised autofocus> [[form.submitButtonText]] </paper-button>
-                                        <paper-button raised autofocus> CANCEL </paper-button>
-                                    </span>
-                                </paper-material>
+                                            <!-- Render Form Controls -->
+                                            <span style="float:right;">
+                                                <br/>
+                                                <paper-button raised autofocus on-tap="_collectParams"> [[form.submitButtonText]] </paper-button>
+                                                <paper-button raised autofocus> CANCEL </paper-button>
+                                            </span><br/>
+                                </paper-material><br/>
                         </template>
-            </paper-card>
+                </paper-card>
+            <paper-material>
 
-                <!--paper-card id="uploadForm" class="size-position" elevation="2">
-                    <hr/> NODE SERVER CONNECTION TITLE <hr/>
-                            <p> prp1 </p>
-                            <p> prp2 </p>
-                            <p> prp3 </p>
-
-                </paper-card-->
         </center>
   </template>
 
@@ -87,14 +105,22 @@
                     value: 'UPLOAD_A_FILE',
                     notify: true
                 },
+                formMethod: {
+                    type: String,
+                    value: 'GET'
+                },
                 targetURL: {
                     type: String,
-                    value: '/api/v1/upload-file',
-                    notify: true
+                    value: '/api/v1/upload-file'
                 },
-                formObj: {
+                formElementsObj: {
                     type: Array,
                     value: function(){ return []; },
+                    notify: true
+                },
+                formParamsObj: {
+                    type: Object,
+                    value: function(){ return {}; },
                     notify: true
                 },
                 description:{
@@ -103,18 +129,64 @@
                 }
         },
 
+        /*
+        -------------------------------------------------------
+        -[ Private Methods for Component ]-
+        -------------------------------------------------------
+        */
+
         _validateTextType: function(key){
-            return (key === 'text')? true : false;
+                                        return (key === 'text')? true : false;
         },
 
         _validateFileType: function(key){
-            return (key === 'file')? true : false;
+                                        return (key === 'file')? true : false;
         },
 
         _validateFormTitle: function(title){
-            return (title !== '') ? true : false;
+                                        return (title !== '') ? true : false;
         },
 
+        //Collect the params.
+        _collectParams: function(){
+                //making a form.
+                var form = new FormData();
+                var _self=this;
+                //Getting elements value by name.
+                this.formElementsObj[0].params.map(function(elementObj){
+                    var elementValue = document.getElementById(elementObj.id).value;
+                    //console.log(">>>>>>>>" + elementValue);
+                    form.append(elementObj.name, elementValue);
+                });
+
+                //logging the collected params.
+                console.dir(form);
+        },
+
+        //Validating the params.
+        _validateParam: function(param){},
+
+        //Submitting the form.
+        _submit: function(){
+                this.$.ajax.method = this.formMethod;
+                this.$.ajax.url = this.targetURL;
+                this.$.ajax.body= this.formParamsObj;
+                this.$.ajax.generateRequest();
+        },
+
+        //Ajax Methods
+        _onSuccess: function(obj){
+            console.dir(obj);
+        },
+        _onError: function(err){
+            console.dir(err);
+        },
+
+        /*
+        -------------------------------------------------------
+        -[ Component Events ]-
+        -------------------------------------------------------
+        */
         attached: function(){
             console.log('Element Attached');
         },
@@ -125,18 +197,18 @@
             //TODO: have to implement this
 
             //Sample for the from array object.
-            this.formObj = [
+            this.formElementsObj = [
                 {
                     "title":"NNG-FORM-ELEMENT",
                     "target":"/api/v1/upload-file",
                     "submitButtonText":"UPLOAD NOW",
                     "backReference":"_scriptBack",
                     "params":[
-                        {"type":"text", "label":"label1", "name":"name1"},
-                        {"type":"text", "label":"label2", "name":"name2"},
-                        {"type":"text", "label":"label3", "name":"name3"},
-                        {"type":"text", "label":"label4", "name":"name4"},
-                        {"type":"file", "label":"label for File ...", "name":"file1"}
+                        {"type":"text", "label":"label1", "id":"nm1", "name":"name1", "value":"value1"},
+                        {"type":"text", "label":"label2", "id":"nm2", "name":"name2", "value":"value2"},
+                        {"type":"text", "label":"label3", "id":"nm3", "name":"name3", "value":"value3"},
+                        {"type":"text", "label":"label4", "id":"nm4", "name":"name4", "value":"value4"},
+                        {"type":"file", "label":"label for File ...", "id":"fl1", "name":"file1", "value":""}
                     ]
                 }
             ];

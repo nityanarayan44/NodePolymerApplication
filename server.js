@@ -31,7 +31,9 @@
 /* Own written modules-library */
 	var coreLogics 	= require('./lib/coreLogics.js');
 	var form 		= require('./lib/formProcessing.js');
-	var phantomWork = require('./lib/phantomWork.js');
+	var teamjsondata= require('./lib/teamjsondata.js');
+/* Data */
+	var empdata = require('./data/empdata.js');
 
 /* Setting up static directory for static file serving. */
 	app.use(express.static('public'));
@@ -58,8 +60,8 @@
 	/* File Upload Section. [Full-working Code]*/
 	app.post('/api/v1/upload-form', form.upload);
 
-	//Phantom work
-	app.get("/api/v1/phantom", phantomWork.getTemp);
+	//to Get the team list.
+	app.get("/api/v1/getTeam", teamjsondata.getTeam );
 
 /*
 	----------------------------------------------------------------------------------------------------------------------------

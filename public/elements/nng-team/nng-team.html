@@ -1,0 +1,292 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 31-Oct-2016
+@Desc: Welcome Node [Welcome Screen]
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-grid/iron-grid.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-datatable/paper-datatable.html">
+<link rel="import" href="../../bower_components/paper-datatable/paper-datatable-card.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="nng-team">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+        color: var(--google-red-500);
+        @apply(--paper-font-body2);
+      }
+
+      span,
+      input {
+        @apply(--paper-font-body2);
+      }
+    </style>
+    <style is="custom-style">
+        .flex-wrap{
+            @apply(--layout-horizontal);
+            @apply(--layout-wrap);
+        }
+        .card-content{
+            @apply(--layout-vertical);
+        }
+        .flex-equal-justified {
+                @apply(--layout-horizontal);
+                @apply(--layout-justified);
+        }
+        .c-header { @apply(--paper-font-headline); }
+        .c-desc {
+            color: var(--paper-grey-600);
+            font-size: 15px;
+        }
+        .c-location {
+                float: right;
+                font-size: 15px;
+                vertical-align: middle;
+        }
+        .c-read { color: var(--google-blue-500); }
+        .card-actions { margin-left: 0; text-align: left; text-shadow: ;}
+        paper-card{
+            margin-right:10px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            word-break: normal;
+        }
+        paper-card.tiles{
+            /*width: 100%;*/
+        }
+        paper-material.dataContainer{
+            background: white;
+            margin-top: 10px;
+        }
+        paper-material.welcomeBoard{
+            padding:20px;
+        }
+        paper-material.detail-page{
+            margin-left: 10px;
+            margin-right: 10px;
+            background: #bbb;
+        }
+        paper-tabs{
+            width: 100%;
+            background-color: var(--paper-grey-600);
+            color: #fff;
+        }
+        paper-dialog.size-position {
+                position: fixed;
+                width: 90%;
+                top: 10%;
+                left: 20px;
+                /*height: 150px;*/
+                overflow: auto;
+        }
+        div.pprcardContainer{
+            position: relative;
+            font-weight: lighter;
+        }
+    </style>
+
+        <!-- AJAX Component -->
+        <iron-ajax
+            id="ajax"
+            method="GET"
+            handle-as="json"
+            on-response="_ajaxResponse"
+            on-error="_ajaxError"
+            >
+        </iron-ajax>
+
+        <!-- Web Element to Rendor -->
+
+
+        <paper-material class="detail-page" elevation="0">
+
+                <!-- Description -->
+                <!-- <h2 align="left"> Deatils of Organisation's Employees/Members </h2> -->
+
+                <!-- Tabs -->
+                <paper-tabs selected="0">
+                    <paper-tab on-tap="_switchToFirstTab" >TESTING</paper-tab>
+                    <paper-tab on-tap="_switchToSecondTab">DEVELOPMENT</paper-tab>
+                    <paper-tab on-tap="_switchToThirdTab" >TOP LEVEL</paper-tab>
+                </paper-tabs>
+
+                <iron-pages id="pages" selected="0">
+
+                    <!-- Page1 For dev departments -->
+                    <div>
+                        <paper-material class="dataContainer" elevation="0">
+                                <template is="dom-repeat" items="{{dataObj}}" as="teams">
+
+                                        <paper-datatable-card id="datatableCard" header="Person" page-size="20" data-source="{{teams.members}}">
+                                                        <!-- Table Data -->
+                                        					<paper-datatable id="datatable" selectable multi-selection selected-items="{{selectedItems}}" on-row-tap="rowTapped">
+                                        						<div no-results>
+                                        							Loading or no more items...
+                                        						</div>
+                                        						<paper-datatable-column header="ID" property="id" type="Number" tooltip="Some title" sortable align="center" style="min-width: 150px">
+                                                                    {{id}}
+                                                                </paper-datatable-column>
+                                        						<paper-datatable-column header="NAME" property="name" type="String" tooltip="Some title" sortable style="min-width: 150px">
+                                        							{{name}}
+                                        						</paper-datatable-column>
+                                        						<paper-datatable-column header="JOINED" property="joined" type="String" tooltip="Some title" sortable style="min-width: 150px">
+                                                                    {{joined}}
+                                                                </paper-datatable-column>
+                                        						<paper-datatable-column header="DESIGNATION" property="designation" type="String" sortable tooltip="Some title" style="min-width: 150px">
+                                        							{{designation}}
+                                        						</paper-datatable-column>
+                                                                <paper-datatable-column header="PROFILE" property="profile" type="String" sortable tooltip="Some title">
+                                        							{{profile}}
+                                        						</paper-datatable-column>
+                                        					</paper-datatable>
+                                        </paper-datatable-card>
+
+
+                                </template>
+                        </paper-material>
+                    </div>
+
+                    <!-- Page2 For qa departments -->
+                    <div>
+                        <paper-material class="tilesContainer" elevation="0">
+                                NO DATA ...
+                        </paper-material>
+                    </div>
+
+                    <!-- Page3 For top-level departments -->
+                    <div>
+                        <paper-material>
+                                            <div class="xl12 l12 m12 s12 xs12">
+                                            <paper-card class="tiles" image="{{member.imagePath}}" elevation="1">
+                                                    <div class="card-content">
+                                                        <div class="c-header"> {{member.name}} </div>
+                                                        <p class="c-desc">
+                                                            <u>Employee Id:</u> {{member.eid}} <br/>
+                                                            {{member.designation}}<br/> <!-- Designation -->
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="card-actions">
+                                                        <paper-icon-button icon="icons:account-circle" data-dialog="modal" on-tap="_openDialog"></paper-icon-button>
+                                                        <paper-dialog id="InfoDialog_{{i}}" class="size-position" alwaysOnTop="true">
+                                                                <div class="c-header"> {{member.name}} </div>
+                                                                <p class="c-desc">
+                                                                    <u>Employee Id:</u> {{member.eid}} <br/>
+                                                                    {{member.designation}}<br/> <!-- Designation -->
+                                                                </p>
+                                                                <paper-input label="Person Department" value="{{teams.dept}}" disabled></paper-input>
+                                                                <paper-input label="Person Email" value="{{member.email}}" disabled></paper-input>
+                                                                <paper-input label="Education" value="{{member.education}}" disabled></paper-input>
+                                                                <paper-input label="Profile" value="{{member.profile}}" disabled></paper-input>
+                                                                <div class="buttons">
+                                                                        <paper-button  dialog-confirm autofocus>Hide</paper-button>
+                                                                </div>
+                                                        </paper-dialog>
+                                                        <!-- <paper-button raised class="c-read" on-tap="_openStory"> EXPAND </paper-button> -->
+                                                        <!-- <iron-collapse id="story" style="width:100%;">
+                                                            <paper-input label="Person Department" value="{{teams.dept}}" disabled></paper-input>
+                                                            <paper-input label="Person Email" value="{{member.email}}" disabled></paper-input>
+                                                            <paper-input label="Education" value="{{member.education}}" disabled></paper-input>
+                                                            <paper-input label="Profile" value="{{member.profile}}" disabled></paper-input>
+                                                        </iron-collapse> -->
+                                                    </div>
+                                            </paper-card>
+                                            </div>
+                        </paper-material>
+                    </div>
+
+                </iron-pages>
+
+        </paper-material>
+
+
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'nng-team',
+
+        properties: {
+                greeting: {
+                    type: String,
+                    value: 'Homescreen',
+                    notify: true
+                },
+                apiServer:{
+                        type: String,
+                        value: '/api/v1/getTeam',
+                },
+                dataObj:{
+                        type: Array,
+                        value: function(){ return []; },
+                        notify: true
+                }
+        },
+        /*
+        -----------------------------------
+        Dialog to show the people detail
+        -----------------------------------
+        */
+        _openDialog: function(EvtObj){
+            //console.dir(EvtObj);
+            EvtObj.path[2].lastElementChild.open();
+            //this.$.InfoDialog.open();
+        },
+
+        _switchToFirstTab: function() { this.$.pages.selected = 0; },
+        _switchToSecondTab: function() { this.$.pages.selected = 1; },
+        _switchToThirdTab: function(obj) { this.$.pages.selected = 2; },
+
+        _openStory: function(obj){
+            console.log(obj.path[0].innerText);
+            (obj.path[0].innerText === "EXPAND" ) ? obj.path[0].innerText = "COLLAPSE" : obj.path[0].innerText = "EXPAND";
+            //Opening the story relativly vai the following path.
+            //console.log(obj.path[1].childNodes[3]);
+            obj.path[1].childNodes[3].toggle();
+        },
+        attached: function(){
+            //Call the AJAX and get the result.
+            this.$.ajax.url = this.apiServer;
+            this.$.ajax.method = 'GET';
+            this.$.ajax.generateRequest();
+        },
+        _ajaxError: function(err){
+            console.log(err);
+        },
+        _ajaxResponse: function(resObj){
+            //console.dir(resObj);
+            console.info('Response arrived.');
+            console.dir(resObj.detail.response);
+            this.dataObj = resObj.detail.response;
+        },
+        ready: function(){
+            //Sample Data brfore real data.
+            this.dataObj = [{
+                "greeting":"Loading contents...",
+                "members":[{}]
+            }];
+
+        }
+
+      });
+    })();
+  </script>
+</dom-module>

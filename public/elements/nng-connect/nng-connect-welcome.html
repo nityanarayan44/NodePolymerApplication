@@ -1,0 +1,245 @@
+<!--
+@Author: Nitya Narayan Gautam
+@Date: 07-FEB-2017
+@Desc: Welcome element for connect application [Welcome element]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<!-- D3 Library -->
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<dom-module id="nng-connect-welcome">
+
+        <template>
+                <style include="shared-styles">
+                        .Card{
+                                padding: 10px;
+                                font-family: 'Roboto', 'roboto';
+                                background-color: white;
+                                width: auto;
+                                color: black;
+                                margin: 10px;
+                                overflow: hidden;
+                                /*font-size: 1rem;*/
+                        }
+                        #bg{
+                                font-size: 2rem;
+                                top:100px;
+                                left: 10%;
+                                z-index: -1;
+                                opacity: 0.7;
+                        }
+                        .CONNECT-PEOPLE{
+                                height: 3rem; width: 3rem;
+                                color: var(--google-red-500);
+                        }
+
+                        /* Styling For Clock */
+                                body {
+                                  background: #222;
+                                  margin: auto;
+                                  /*width: 960px;*/
+								  position: absolute;
+								  margin-left:10%;
+                                }
+								svg{
+									position: absolute;
+									margin-left:10%;
+								}
+
+                                .arc-text {
+                                  font: 16px sans-serif;
+                                }
+
+                                .arc-center {
+                                  fill: none;
+                                }
+
+                                #credit {
+                                  position: absolute;
+                                  font: 10px sans-serif;
+                                  right: 10px;
+                                  bottom: 10px;
+                                  color: #ddd;
+                                }
+
+                                #credit a {
+                                  color: inherit;
+                                }
+
+                </style>
+
+                <div id="bg">
+                        <paper-material elevation='1' class="Card">
+                                [[greeting]]
+								<iron-icon class="CONNECT-PEOPLE" icon="social:people" item-icon></iron-icon>
+								[[appName]]
+                                <p style="font-size:10px;"> [[message]] </p>
+                        </paper-material>
+
+                        <paper-material class="Card">
+                                <div id="credit">By <a href="http://github.com/nityanarayan44" title="You will be directed to the Github page.">Nitya Narayan Gautam</a>.</div>
+                        </paper-material>
+                </div>
+        </template>
+
+        <script>
+
+        var width = 1000,
+            height = 500,
+            radius = Math.min(width, height) / 1.9,
+            spacing = .08;
+
+        	/* D3 time formation */
+        var formatSecond = d3.time.format("%-S seconds"),
+            formatMinute = d3.time.format("%-M minutes"),
+            formatHour = d3.time.format("%-H hours"),
+            formatDay = d3.time.format("%A"),
+            formatDate = function(d) { d = d.getDate(); switch (10 <= d && d <= 19 ? 10 : d % 10) { case 1: d += "st"; break; case 2: d += "nd"; break; case 3: d += "rd"; break; default: d += "th"; break; } return d; },
+            formatMonth = d3.time.format("%B");
+
+        	/* Coloring of arc. */
+        var color = d3.scale.linear()
+            .range(["hsl(-180,100%,50%)", "hsl(180,100%,50%)"])
+            .interpolate(function(a, b) { var i = d3.interpolateString(a, b); return function(t) { return d3.hsl(i(t)); }; });
+
+        	/* Arc creation */
+        var arcBody = d3.svg.arc()
+            .startAngle(0)
+            .endAngle(function(d) { return d.value * 2 * Math.PI; })
+            .innerRadius(function(d) { return d.index * radius; })
+            .outerRadius(function(d) { return (d.index + spacing) * radius; })
+            .cornerRadius(6);
+
+        var arcCenter = d3.svg.arc()
+            .startAngle(0)
+            .endAngle(function(d) { return d.value * 2 * Math.PI; })
+            .innerRadius(function(d) { return (d.index + spacing / 2) * radius; })
+            .outerRadius(function(d) { return (d.index + spacing / 2) * radius; });
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+          .append("g")
+            .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var field = svg.selectAll("g")
+            .data(fields)
+          .enter().append("g");
+
+        field.append("path")
+            .attr("class", "arc-body");
+
+        field.append("path")
+            .attr("id", function(d, i) { return "arc-center-" + i; })
+            .attr("class", "arc-center");
+
+        field.append("text")
+            .attr("dy", ".35em")
+            .attr("dx", ".75em")
+            .style("text-anchor", "start")
+          .append("textPath")
+            .attr("startOffset", "50%")
+            .attr("class", "arc-text")
+            .attr("xlink:href", function(d, i) { return "#arc-center-" + i; });
+
+        tick();
+
+        d3.select(self.frameElement).style("height", height + "px");
+
+        function tick() {
+          if (!document.hidden) field
+              .each(function(d) { this._value = d.value; })
+              .data(fields)
+              .each(function(d) { d.previousValue = this._value; })
+            .transition()
+              .ease("elastic")
+              .duration(500)
+              .each(fieldTransition);
+
+          setTimeout(tick, 1000 - Date.now() % 1000);
+        }
+
+        function fieldTransition() {
+          var field = d3.select(this).transition();
+
+          field.select(".arc-body")
+              .attrTween("d", arcTween(arcBody))
+              .style("fill", function(d) { return color(d.value); });
+
+          field.select(".arc-center")
+              .attrTween("d", arcTween(arcCenter));
+
+          field.select(".arc-text")
+              .text(function(d) { return d.text; });
+        }
+
+        function arcTween(arc) {
+          return function(d) {
+            var i = d3.interpolateNumber(d.previousValue, d.value);
+            return function(t) {
+              d.value = i(t);
+              return arc(d);
+            };
+          };
+        }
+
+        function fields() {
+          var now = new Date;
+          return [
+            {index: .7, text: formatSecond(now), value: now.getSeconds() / 60},
+            {index: .6, text: formatMinute(now), value: now.getMinutes() / 60},
+            {index: .5, text: formatHour(now),   value: now.getHours() / 24},
+            {index: .3, text: formatDay(now),    value: now.getDay() / 7},
+            {index: .2, text: formatDate(now),   value: (now.getDate() - 1) / (32 - new Date(now.getYear(), now.getMonth(), 32).getDate())},
+            {index: .1, text: formatMonth(now),  value: now.getMonth() / 12}
+          ];
+        }
+
+        </script>
+
+        <script>
+                (function() {
+                'use strict';
+
+                Polymer({
+                                is: 'nng-connect-welcome',
+
+                                /*
+                                -----------------------------------
+                                Element properties.
+                                -----------------------------------
+                                */
+                                properties: {
+                                        greeting:{ type: String, value: 'Welcome to '},
+                                        appName:{ type: String, value: 'CONNECT'},
+                                        author: {type: String, value: 'Ashutosh Mishra [NNG]'},
+                                        message: {
+                                                type: String,
+                                                value: 'This project is just an experiment under the auther. [Part of:nng  experiments]. and for now it is only for personal networks (like: LAN NETWORK), so any one want to access the CONNECT he needs to Join the LAN network first.'
+                                        }
+                                },
+
+                                /*
+                                ------------------------------------------------
+                                Private functions
+                                ------------------------------------------------
+                                */
+
+                                /*
+                                ------------------------------------------------
+                                Element events
+                                ------------------------------------------------
+                                */
+                                ready: function(){ },
+                                attached: function(){ console.log("nng-connect-welcome element Attached to main page."); }
+                        });
+                })();
+        </script>
+
+
+</dom-module>

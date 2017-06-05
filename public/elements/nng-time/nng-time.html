@@ -1,0 +1,186 @@
+<!--
+@Author Ashutosh Mishra
+@Date: 02 June 2017
+@Desc: TIMING [With diff. timezones.]
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/font-roboto/roboto.html">
+<link rel="import" href="../../bower_components/iron-grid/iron-grid.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="nng-time">
+    <template>
+        <style>
+                :host{
+                    display: block;
+                    font-family: Roboto;
+                    font-size: 1rem;
+                    color: black;
+                    width: inherit;
+                    height: inherit;
+                    @apply(--nng-time);
+                }
+                .counter_timeanddate {
+                    font-size   : 5em;
+                    font-weight : 300;
+                    color       : #2196F3;
+                    text-align  : center;
+                    vertical-align: middle;
+                    margin-top: -20px;
+                }
+                .counter_time{
+                    font-size: 2rem;
+                }
+                .counter_DayMonthYear{
+                    color: #2196F3;
+                    font-size: 1em;
+                    font-weight: lighter;
+                }
+                .counter_ampm{
+                    color: #2196F3;
+                    font-size: 0.1em;
+                    font-weight:lighter;
+                }
+                .counter_timeZonelbl{
+                    font-size: 1em;
+                    font-weight:lighter;
+                    overflow: hidden;
+                    /*overflow-x: scroll;*/
+                }
+
+                /* DIV/Card with All screen sizes */
+                .graphbox {
+                    padding: 10px;
+                    background: transparent;
+                    @apply(--layout-vertical);
+                    @apply(--layout-center);
+                }
+                paper-material{
+                    text-align: center;
+                    width: 100%;
+                    padding:5px;
+                    background-color: white;
+                }
+                /*::-webkit-scrollbar{
+                	width: 1px;
+                    height: auto;
+                }
+                ::-webkit-scrollbar-track{
+                    width: 1px;
+                	-webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.1);
+                	background-color: transparent;
+                }*/
+                .tag{
+                        border-radius: 10px;
+                        border-style: dotted;
+                        border-width: thin;
+                        border-color: #00F;
+                        padding-left: 5px; padding-right: 5px;
+                }
+        </style>
+
+        <!-- Design -->
+                    <iron-grid>
+                        <template is="dom-repeat" items="{{d}}" as="arr" index-as="i">
+                                        <div class="graphbox xl6 l6 m6 s12 xs12">
+                                            <paper-material elevation="[[elevation]]">
+                                                        <!-- Timezone label -->
+                                                        <div class="counter_timeZonelbl tag"><font color="[[arr.data.0.color]]"> [[arr.data.0.timezone]] </font></div>
+                                                        <!-- Time and Date -->
+                                                        <div class="counter_timeanddate">
+                                                            <span class="counter_time"> <font color="[[arr.data.0.color]]"> [[arr.data.0.time]] </font></span>
+                                                            <span class="counter_ampm"> [[arr.data.0.ampm]] </span>
+                                                        </div>
+                                                        <!-- Day Month and Year -->
+                                                        <div class="counter_DayMonthYear"> [[arr.data.0.dayMonthYear]] </div>
+                                            </paper-material>
+                                        </div>
+                        </template>
+                    </iron-grid>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'nng-time',
+
+            // Element Properties
+            properties:{
+
+                    /* Array contains all the data of the time tobe shown. */
+                    d:{
+                            type: Array,
+                            value: function(){ return []; },
+                            notify: true
+                    },
+                    showTimeZone: {
+                            type: Array,
+                            value: function(){
+                                return [
+                                    "Asia/Kolkata",
+                                    "Europe/Amsterdam"
+                                ];
+                            },
+                            notify: true
+                    },
+                    availbleTimezones: {
+                        type: Array,
+                        value: function(){
+                            return [
+                                "Asia/Kolkata",
+                                "Europe/Amsterdam"
+                            ];
+                        }
+                    },
+                    //#DEFINE
+                    days:{ type: Array, value: function(){ return ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATERDAY"]; } },
+                    months:{ type: Array, value: function(){ return ["JANUARY", "FEBRUARY", "MARCH","APRIL", "MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOVER","NOVEMBER","DECEMBER"]; } },
+                    today:{ type: String, value: '' },
+                    /* Property for paper card elevation(box-shadow) from outside */
+                    elevation:{
+                        type: Number,
+                        value: 1
+                    }
+            },
+            _getDay: function(){
+                this.today = this.days[(new Date()).getDay()];
+            },
+            //Rendering the time
+            _renderTime: function(){
+
+                                //getting todays dayname
+                                this._getDay();
+                                //getting this object.
+                                var self = this;
+
+                                //iteration
+                                setInterval((function(){
+                                    //firstly flush the old data.
+                                    self.d = [];
+
+                                    //processing the array of timezone to be shown.
+                                    this.showTimeZone.map( function(TZdata){
+                                        //Setting up timezone.
+                                        var time = (new Date().toLocaleString("en-US", {timeZone: TZdata}));
+                                        //
+                                        //compile timeanddate.
+                                        var timeanddate = time.split(" ");
+                                        var date = timeanddate[0];
+                                        var time = timeanddate[1];
+                                        var ampm = timeanddate[2];
+                                        var dayMonthYear =  self.today + ", " +(date.split('/'))[1] +" "+ self.months[ (parseInt((date.split('/'))[0]))-1 ] + " " + (date.split('/'))[2];
+
+                                        //inserting this to main array to render.
+                                        self.push('d', {'type':'counter', 'fullWidth':false, 'data': [ {'timezone':TZdata, 'time': time, 'ampm':ampm, 'dayMonthYear': dayMonthYear, 'color':'#2196F3'} ] });
+                                    });
+                                }).bind(self), 1000);
+
+            },
+            //functions
+            attached: function(){
+                                this._renderTime();
+                                //setInterval(function(){console.log("Its me");}, 1000);
+                                //this.setInterval(this._rendorTime, 1000);
+            }
+        });
+    </script>
+</dom-module>

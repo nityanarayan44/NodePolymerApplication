@@ -9,12 +9,10 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
-<dom-module id="nng-connect-live-users">
+<dom-module id="nng-connect-notifications">
         <template>
                 <style include="shared-styles">
                         :host { display: block; }
-
-                        paper-material.user{ font-size: 1rem; font-weight: lighter; padding: 10px; background-color: #FFF; color: #000; margin:10px; text-align: left;}
 
                         paper-material.page{
                                 margin: 10px;
@@ -41,22 +39,13 @@
                                 color: #000; margin:10px;
                                 text-align: left;
                         }
-
                 </style>
 
                 <paper-material class="page" elevation="0">
-                        <p class="heading">Live Users: </p>
-                        <!-- If no user available -->
-                        <template is="dom-if" if="{{isNoUsers}}">
-                                <paper-material class="list-item">
-                                        <span> No user available right now. </span>
-                                </paper-material>
-                        </template>
-
-                        <!-- when usrs are available. -->
-                        <template is="dom-repeat" items="[[obj.users]]" as="user" index-as="i">
-                                <paper-material class="list-item" elevation="2">
-                                        <iron-icon icon="icons:account-box" item-icon></iron-icon> <span> [[user.name]] </span>
+                        <p class="heading">Notifications: </p>
+                        <template is="dom-repeat" items="[[obj.notifications]]" as="notifications" index-as="i">
+                                <paper-material class="list-item" elevation="1">
+                                        <iron-icon icon="icons:[[notifications.type]]" item-icon></iron-icon> <span> [[notifications.info]] </span>
                                 </paper-material>
                         </template>
                 </paper-material>
@@ -68,7 +57,7 @@
                 'use strict';
 
                 Polymer({
-                                is: 'nng-connect-live-users',
+                                is: 'nng-connect-notifications',
 
                                 /*
                                 -----------------------------------
@@ -77,37 +66,23 @@
                                 */
                                 properties: {
                                         author: {type: String, value: 'Ashutosh Mishra [NNG]'},
-                                        isNoUsers: {type: Boolean, value: true, notify: true},
                                         obj: { type: Object, value: function(){ return {}; }, notify: true }
                                 },
                                 /*
                                 -----------------------------------
-                                Element event and functions.
+                                Element functions.
                                 -----------------------------------
                                 */
-                                _isUserAvail: function(){
-                                        //Check the new Object first.
-                                        if(this.obj.users){
-                                                console.log('users are avail.');
-                                                return false;
-                                        }else{
-                                                this.obj = { 'users': [] };
-                                                console.log('no users');
-                                                return true;
-                                        }
-                                },
-
                                 ready: function(){
-                                        this.isNoUsers = false;
                                         this.obj = {
-                                                "users":[
-                                                                {"name":"A"},
-                                                                {"name":"B"},
-                                                                {"name":"C"}
+                                                "notifications":[
+                                                                {"type":"info", "info":"new post from a"},
+                                                                {"type":"report-problem", "info":"Problem in syncing"},
+                                                                {"type":"info-outline", "info":"new post from c"}
                                                 ]
                                         };
                                 },
-                                attached: function(){ console.log("nng-connect-live-users Loaded."); }
+                                attached: function(){ console.log("nng-connect-notifications Loaded."); }
                         });
                 })();
         </script>
