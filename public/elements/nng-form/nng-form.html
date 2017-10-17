@@ -111,7 +111,7 @@
                 },
                 targetURL: {
                     type: String,
-                    value: '/api/v1/upload-file'
+                    value: '/api/v1/polling'
                 },
                 formElementsObj: {
                     type: Array,
@@ -160,25 +160,26 @@
                 });
 
                 //logging the collected params.
-                console.dir(form);
+                //console.dir(form);
+                this._submit(form);
         },
 
         //Validating the params.
         _validateParam: function(param){},
 
         //Submitting the form.
-        _submit: function(){
+        _submit: function(obj){
                 this.$.ajax.method = this.formMethod;
                 this.$.ajax.url = this.targetURL;
-                this.$.ajax.body= this.formParamsObj;
+                this.$.ajax.body= obj;
                 this.$.ajax.generateRequest();
         },
 
         //Ajax Methods
-        _onSuccess: function(obj){
+        _ajaxResponse: function(obj){
             console.dir(obj);
         },
-        _onError: function(err){
+        _ajaxError: function(err){
             console.dir(err);
         },
 
@@ -200,15 +201,13 @@
             this.formElementsObj = [
                 {
                     "title":"NNG-FORM-ELEMENT",
-                    "target":"/api/v1/upload-file",
+                    "target":"/api/v1/polling",
                     "submitButtonText":"UPLOAD NOW",
                     "backReference":"_scriptBack",
                     "params":[
-                        {"type":"text", "label":"label1", "id":"nm1", "name":"name1", "value":"value1"},
-                        {"type":"text", "label":"label2", "id":"nm2", "name":"name2", "value":"value2"},
-                        {"type":"text", "label":"label3", "id":"nm3", "name":"name3", "value":"value3"},
-                        {"type":"text", "label":"label4", "id":"nm4", "name":"name4", "value":"value4"},
-                        {"type":"file", "label":"label for File ...", "id":"fl1", "name":"file1", "value":""}
+                        {"type":"text", "label":"Provide your Comment for this application", "id":"comment1", "name":"comment1", "value":""},
+                        {"type":"text", "label":"Does it worth using according you ?", "id":"comment2", "name":"comment2", "value":""},
+                        {"type":"text", "label":"Provide your  suggestion(s)", "id":"suggestion", "name":"suggestion", "value":""}
                     ]
                 }
             ];

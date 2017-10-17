@@ -32,10 +32,14 @@
 	var coreLogics 	= require('./lib/coreLogics.js');
 	var form 		= require('./lib/formProcessing.js');
 	var teamjsondata= require('./lib/teamjsondata.js');
+	var todayInHistory= require('./lib/todayInHistory.js');
+	
 /* Data */
 	var empdata = require('./data/empdata.js');
 
 /* Setting up static directory for static file serving. */
+	//Whenever anyone acces this server url(base url) then these public file will be served directly.
+	app.use(bodyParser.json());
 	app.use(express.static('public'));
 
 /* Starting server on defined PORT*/
@@ -50,12 +54,14 @@
 /*-----------------------------
 	Defining different Routes
 -------------------------------*/
+	//POST
+	app.post('/', function(req, res, next){ console.log(res); res.status(200).send("All Okay");});
 
 	/*GET Method*/
-	//app.get("/", function(req, res, next){ res.status(200).send('Root invoked'); });
+	app.get("/api/v1/polling", function(req, res, next){ console.log(req); res.status(200).send('done'); });
 
 	/*GET Method: Sending json list of Quotes */
-	app.get("/api/v1/getHomeScreenContent", coreLogics.sendHomeScreenContent);
+	app.get("/api/v1/getHomeScreenContent", todayInHistory.getHistory);
 
 	/* File Upload Section. [Full-working Code]*/
 	app.post('/api/v1/upload-form', form.upload);
@@ -63,6 +69,15 @@
 	//to Get the team list.
 	app.get("/api/v1/getTeam", teamjsondata.getTeam );
 
+/*
+	----------------------------------------------------------------------------------------------------------------------------
+	 Routes for data saving to Mongo.
+	---------------------------------------------------------------------------------------------------------------------------
+*/
+	//Recieving test data and saving it to mongo DB.
+	app.post('/nng/v1/core/sendTestData', function(req, res, next){res.status(200).send("sendTestData");});
+	
+	
 /*
 	----------------------------------------------------------------------------------------------------------------------------
 	Callback Functions for Routes

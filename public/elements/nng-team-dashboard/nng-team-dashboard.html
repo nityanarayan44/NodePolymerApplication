@@ -30,15 +30,13 @@
                 font-family: Roboto;
                 font-size: 1rem;
                 color: black;
-                width: inherit;
-                height: inherit;
                 @apply(--nng-team-dashboard);
             }
 
             google-chart {
-                margin-top: 20px;
-                width           : inherit;
-                height          : inherit;
+                /*margin-top: 20px;*/
+                width           : 100%;
+                /*height        : 100%;*/
                 position        : relative;
             }
             paper-card{
@@ -59,6 +57,7 @@
                 @apply(--layout-center);
                 @apply(--nng-team-dashboard-paper-material);
             }
+
             paper-material::-webkit-scrollbar{
             	width: 3px;
             }
@@ -144,16 +143,16 @@
                 font-size: 1.5em;
                 background-color: lightgray;
             }
-        @media print {
-                #uploadBtn * { display:none; }
-                paper-material {
-                        border-radius: 3px;
-                        border-style: solid;
-                        border-width: 1px;
-                        border-color: inherit;
-                        box-shadow: none;
-                }
-        }
+            @media print {
+                    #uploadBtn * { display:none; }
+                    paper-material {
+                            border-radius: 3px;
+                            border-style: solid;
+                            border-width: 1px;
+                            border-color: inherit;
+                            box-shadow: none;
+                    }
+            }
         </style>
 
         <!-- Setting Iron ajax and calling an API to get data -->
@@ -236,7 +235,7 @@ Main Content of Element will render here.
                                 Dom if, Rendering Google chart
                                 ------------------------------------------------->
                                 <template is="dom-if" if="[[isGraphType(arr)]]">
-                                        <div class="graphbox xl12 l12 m12 s12 xs12">
+                                        <div class="graphbox xl6 l6 m12 s12 xs12">
                                                 <paper-material elevation="[[elevation]]">
                                                         <!-- Simple Google chart. -->
                                                         <google-chart
@@ -372,7 +371,7 @@ Main Content of Element will render here.
         setGraphOption: function(arr){
 
             if(arr.option){
-                    console.log("Using API graph Options.");
+                    //console.log("Using API graph Options.");
                 	arr.option.legend 		= arr.option.legend || "bottom";
             		arr.option.pieHole 		= "pieHole" in arr.option ? arr.option.pieHole : 0.8;
             		arr.option.colors 		= "colors" in arr.option ? arr.option.colors 		: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
@@ -419,9 +418,51 @@ Main Content of Element will render here.
 
         },
 
+        _compileYearData: function(ArrObj){
+            var result = [];
+            var y99 = 0, y00 = 0, y01 = 0, y02 = 0, y03 = 0, y04 = 0, y05 = 0, y06 = 0, y07 = 0, y08 = 0, y09 = 0, y10 = 0, y11 = 0, y12 = 0, y13 = 0, y14 = 0, y15 = 0, y16 = 0, y17 = 0;
+
+            ArrObj.map(function(data){
+                    var record = (data.split("'"))[0];
+                    //console.log(record);
+                    if (record === "2017") y17++ ;
+                    else if (record === "2016") y16++ ;
+                    else if (record === "2015") y15++ ;
+                    else if (record === "2014") y14++ ;
+                    else if (record === "2013") y13++ ;
+                    else if (record === "2012") y12++ ;
+                    else if (record === "2011") y11++ ;
+                    else if (record === "2010") y10++ ;
+                    else if (record === "2009") y09++ ;
+                    else if (record === "2008") y08++ ;
+                    else if (record === "2007") y07++ ;
+                    else if (record === "2006") y06++ ;
+                    else if (record === "2005") y05++ ;
+                    else if (record === "2004") y04++ ;
+                    else if (record === "2003") y03++ ;
+                    else if (record === "2002") y02++ ;
+                    else if (record === "2001") y01++ ;
+                    else if (record === "2000") y00++ ;
+                    else if (record === "1999") y99++ ;
+            });
+
+            //Pushing values into array...
+            result.push(["Year","Joined-Per-Year"],
+                        ["1999", y99], ["2000", y00], ["2001", y01],
+                        ["2002", y02], ["2003", y03], ["2004", y04],
+                        ["2005", y05], ["2006", y06], ["2007", y07],
+                        ["2008", y08], ["2009", y09], ["2010", y10],
+                        ["2011", y11], ["2012", y12], ["2013", y13],
+                        ["2014", y14], ["2015", y15], ["2016", y16], ["2017", y17]);
+            return result;
+        },
         _render: function() {
                     //Enabling Report Banner/Header.
                     this.isReportReady = true;
+
+					//Defining vars for years.
+					var yearsData = [];
+
                     //DEFINING SOME values.
                     var years = ["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017"];
                     var position = ["lead", "executive", "software engineer", "test", "manager", "trainee", "intern"];
@@ -430,29 +471,32 @@ Main Content of Element will render here.
                     var lineGraphOptions = {
                                 animation : {duration: 1000,easing: 'out',"startup": true},
                 				lineSize:1,
-                				title: "Current Status",
+                				title: "Joining Graph",
                 				legend: { position: "bottom" },
-                				chartArea:{width:"80%", height:"90%"},
+                				chartArea: {left:60,top:10,width:"100%"},
                 				curveType: "function",
                 				colors: ['darkcyan', 'black', 'darkred', '#f3b49f', '#f6c7b6'],
                 				is3D: false,
                 				backgroundColor: {stroke:null, fill:'#FFF', strokeSize: 0},
-                				hAxis : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 5}, format: '####' },
-                				vAxis : { minValue: 0, gridlines: {color: '#f3f3f3'}}
+                				hAxis : { titleTextStyle: {color: '#0FF'}, gridlines: {color: '#f3f3f3',count: 5}, format: '####' },
+                				vAxis : { minValue: 0, gridlines: {color: '#f3f3f3',count: 5}},
+                                bar: {groupWidth: "45%"}
                         },
                         columnGraphOptions = {
                             animation : {duration: 1000,easing: 'out',"startup": true},
-                            title: 'Menpower Status',
-                            chartArea:{width:"80%", height:"80%"},
-                            bar: {groupWidth: "45%"},
-                            legend: { position: "none" },
+                            title: 'Joining Graph',
+                            colors: ['darkcyan', 'black', 'darkred', '#f3b49f', '#f6c7b6'],
+                            chartArea:{left:50, top:10, width:"90%", height:"80%"},
+                            bar: {groupWidth: "95%"},
+                            vAxis : { minValue: 0, gridlines: {color: '#f3f3f3',count: 20}},
+                            legend: { position: "none" }
                         },
                         pieGraphOptions = {
                                 animation : {duration: 1000,easing: 'out',"startup": true},
-                                title: 'People ',
+                                title: 'Working Status ',
                                 curveType: "function",
                                 legend: { position: "bottom" },
-                                chartArea:{width:"80%", height:"90%"},
+                                chartArea:{top:10, width:"90%", height:"80%"},
                                 pieHole: 0.5,
                                 colors: ['darkgreen', 'darkred', 'darkgray']
                         };
@@ -487,6 +531,9 @@ Main Content of Element will render here.
                                         //counter variable increment for total working employees
                                         totalWorking++;
 
+                                        //Making an Array for joined property
+                                        yearsData.push(record.joined);
+
                                         //Checking for Exp level [QA, Developer, Mgt, Sr, Trainee, Intern]
                                         if (record.designation !== "" || record.designation !== " ") {
 
@@ -512,13 +559,20 @@ Main Content of Element will render here.
                         });
 
                 //Finally Adding the data to main variable which will render.
+                                //shorting and compiling the yearData.
+                                var recruitementData = this._compileYearData( yearsData.sort() );
+                                //console.dir(yearsData );
+                                //console.dir( recruitementData );
 
                                 //Adding graph. and counters.
                                 this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'MINDFIRE MENPOWER ANALYTICS REPORT (data from GPS)', 'color':'#2196F3'} ] });
                                         //For the working menpower status.
+                                        this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'WORKING EMPLOYEE (data from GPS [Since 1999])', 'color':'#2196F3'} ] });
                                         this.push('d', {"id":"pieChart","type":"pie", 'option':pieGraphOptions, 'fullWidth':true,  "data":[ ["STATUS","VALUE"],["WORKING",totalWorking],["NOT WORKING",totalNotWorking] ],"width":'4' } );
                                         //Year wise recruitement chart
-                                        this.push('d', {"id":"pieChart","type":"column", 'option':lineGraphOptions, 'fullWidth':true,  "data":[ ["STATUS","VALUE", { role: 'style' }],["WORKING",totalWorking, 'color: darkcyan'],["NOT WORKING",totalNotWorking, 'color: grey'] ],"width":'2' } );
+                                        this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'Hiring Graph (data from GPS)', 'color':'#2196F3'} ] });
+                                        this.push('d', {"id":"pieChart","type":"column", 'option':lineGraphOptions, 'fullWidth':true,  "data": recruitementData, "width":'2' } );
+                                        this.push('d', {"id":"pieChart","type":"area", 'option':lineGraphOptions, 'fullWidth':true,  "data": recruitementData, "width":'2' } );
 
                                 //Persons overview
                                 this.push('d', {'id': 'info-bar', 'type':'label', 'fullWidth':true, 'data': [ {'label':'Persons (data from GPS)', 'color':'#2196F3'} ] });

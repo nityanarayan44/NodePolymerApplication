@@ -55,6 +55,12 @@
         paper-material.welcomeBoard{
             padding:20px;
         }
+        paper-material.heading{
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            background-color: var(--google-cyan-500, darkcyan);
+        }
     </style>
 
         <!-- AJAX Component -->
@@ -72,27 +78,25 @@
             <template is="dom-repeat" items="{{homescrObj}}" as="page">
 
                 <!-- page greeting -->
-                <!-- <h1 class="page-title" tabindex="-1">{{page.greeting}}</h1> -->
-                
+                <paper-material class="heading" elevation="1"> TODAY [Today In History] </paper-material>
+
                 <!-- Contents for homescreen -->
-                <div class="container flex-wrap">
-                        <template is="dom-repeat" items="{{page.tiles}}" as="tile">
-                            <div class="flex">
-                                    <paper-card heading="{{tile.heading}}" image="{{tile.headerImage}}" alt="{{tile.headerTitle}}" elevation="1">
+                <div class="container">
+                        <template is="dom-repeat" items="{{page.today}}" as="tile" index-as="i">
+                            <paper-card elevation="1">
                                               <div class="card-content">
-                                                    <div class="c-header"> {{tile.Title}} </div>
+                                                    <div class="c-header"> {{i}} </div>
                                                     <p class="c-desc">
-                                                        {{tile.description}}
+                                                        {{tile}}
                                                     </p>
                                               </div>
-                                              <div class="card-actions">
+                                              <!--div class="card-actions">
                                                     <paper-button class="c-read" on-tap="_openStory"> Read More </paper-button>
                                                     <iron-collapse id="story" style="width:100%;">
                                                         {{tile.story}}
                                                     </iron-collapse>
-                                              </div>
-                                    </paper-card>
-                            </div>
+                                              </div-->
+                            </paper-card>
                         </template>
                 </div>
 
