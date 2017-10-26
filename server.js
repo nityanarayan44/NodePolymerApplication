@@ -1,11 +1,11 @@
 /*
 @initialy Written: March 2016
-@last modified: May 2017
+@last modified: May 2017, October 2017
 @Author: Ashutosh Mishra
 @Desc: Simple Node Server to serve some REST API.
 */
 /* setting the port for the express nodejs server. */
-	var port 		= process.env.PORT || 10000; // set the port
+	var port 		= process.env.PORT || 5000; // set the port
 
 /* Express nodejs framework module */
 	var express 	= require('express');
@@ -27,7 +27,10 @@
 	var path 		= require('path');
 	var fs 			= require('fs');
 	var util 		= require('util');
-
+/* MongoDB Driver */
+	var MongoClient = require('mongodb').MongoClient;
+	var assert = require('assert');
+	var url = 'mongodb://localhost:27017/test';
 /* Own written modules-library */
 	var coreLogics 	= require('./lib/coreLogics.js');
 	var form 		= require('./lib/formProcessing.js');
@@ -55,7 +58,12 @@
 	Defining different Routes
 -------------------------------*/
 	//POST
-	app.post('/', function(req, res, next){ console.log(res); res.status(200).send("All Okay");});
+	app.post('/', function(req, res, next){ 
+		console.log(req);
+		saveData(req.body);
+		res.header('Access-Control-Allow-Origin', '*');
+		res.status(200).send('Recieved: '+ JSON.stringify(req.body) );
+	});
 
 	/*GET Method*/
 	app.get("/api/v1/polling", function(req, res, next){ console.log(req); res.status(200).send('done'); });
@@ -89,4 +97,34 @@
 		//making data for an API request
 		var arrData = [{"Type":"Sample"}];//Finally sending after stringify json data.
 		res.status(200).send(JSON.stringify(arrData));
+	}
+
+	function connectToMongo(){
+		MongoClient.connect(url, function(err, db) {
+		  assert.equal(null, err);
+		  console.log(">>> Connected correctly to server.");
+		  db.close();
+		});
+	}
+
+	function createCollection(collectionName){
+		MongoClient.connect(url, function(err, db) {
+			if (err) throw err;
+			db.createCollection(collectionName, function(err, res) {
+			  if (err) throw err;
+			  console.log("Collection created!");
+			  db.close();
+			});
+		}); 
+	}
+
+	function saveData(dataObject){
+		MongoClient.connect(url, function(err, db) {
+			if (err) throw err;
+			db.collection("customers").insertOne(dataObject, function(err, res) {
+			  if (err) throw err;
+			  console.log("Record inserted");
+			  db.close();
+			});
+		});
 	}

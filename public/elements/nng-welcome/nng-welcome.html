@@ -16,6 +16,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 
 <dom-module id="nng-welcome">
+
   <template>
     <style include="shared-styles">
       :host {
@@ -56,10 +57,15 @@
             padding:20px;
         }
         paper-material.heading{
+            min-height: 100px;
+            line-height: 100px;
+            font-size: 2.5em;
+            font-weight: lighter;
+            font-family: Roboto, Oxygen, Ubuntu, Cantarell, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
             padding: 20px;
             margin-bottom: 20px;
             color: white;
-            background-color: var(--google-cyan-500, darkcyan);
+            background-color: var(--google-cyan-500, rgb(62, 1, 75));
         }
     </style>
 
@@ -75,32 +81,22 @@
 
         <!-- Web Element to Rendor -->
         <paper-material class="welcomeBoard" elevation="0">
-            <template is="dom-repeat" items="{{homescrObj}}" as="page">
 
                 <!-- page greeting -->
-                <paper-material class="heading" elevation="1"> TODAY [Today In History] </paper-material>
+                <paper-material class="heading" elevation="1"> {{greeting}} </paper-material>
 
-                <!-- Contents for homescreen -->
-                <div class="container">
-                        <template is="dom-repeat" items="{{page.today}}" as="tile" index-as="i">
-                            <paper-card elevation="1">
-                                              <div class="card-content">
-                                                    <div class="c-header"> {{i}} </div>
-                                                    <p class="c-desc">
-                                                        {{tile}}
-                                                    </p>
-                                              </div>
-                                              <!--div class="card-actions">
-                                                    <paper-button class="c-read" on-tap="_openStory"> Read More </paper-button>
-                                                    <iron-collapse id="story" style="width:100%;">
-                                                        {{tile.story}}
-                                                    </iron-collapse>
-                                              </div-->
-                            </paper-card>
-                        </template>
-                </div>
-
-            </template>
+                <!-- Other stuff -->
+                <p>Avaialable Features:</p><hr/>
+                <template is="dom-repeat" items="{{homescrObj}}" as="page" index-as="i">
+                        <paper-card elevation="1">
+                                <div class="card-content">
+                                        <div class="c-header"> {{i+1}} </div>
+                                        <p class="c-desc">
+                                            {{page.today}}
+                                        </p>
+                                </div>
+                        </paper-card>
+                </template>
         </paper-material>
 
 
@@ -117,7 +113,7 @@
         properties: {
                 greeting: {
                     type: String,
-                    value: 'Homescreen',
+                    value: " NNG's  <CONNECT>  Welcomes you",
                     notify: true
                 },
                 apiServer:{
@@ -138,9 +134,9 @@
         },
         attached: function(){
             //Call the AJAX and get the result.
-            this.$.ajax.url = this.apiServer;
-            this.$.ajax.method = 'GET';
-            this.$.ajax.generateRequest();
+            //this.$.ajax.url = this.apiServer;
+            //this.$.ajax.method = 'GET';
+            //this.$.ajax.generateRequest();
         },
         _ajaxError: function(err){
             console.log(err);
@@ -153,10 +149,15 @@
         },
         ready: function(){
             //Sample Data brfore real data.
-            this.homescrObj = [{
-                "greeting":"Loading contents...",
-                "tiles":[{}]
-            }];
+            this.homescrObj = [
+                
+                {"today":"Reporting From Cucumber JSON file"}, 
+                {"today":"Reporting From Server"}, 
+                {"today":"Time according to different timezones"},
+                {"today":"ToDo Events"},
+                {"today":"My All Experiments"},
+                {"today":"On Progress..."}
+            ];
 
         }
 

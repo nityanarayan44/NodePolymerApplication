@@ -1,78 +1,63 @@
 <!--
-@Author: Nitya Narayan Gautam [Ashutosh Mishra]
-@Desc: Layout structure for application.
+  @App: CONNECT [MultiPurpose Application]
+  @Author: Nitya Narayan Gautam [Ashutosh Mishra]
+  @Github: nityanarayan44
+  @Desc: Connect application.
 -->
 
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+      <head>
+              <!-- Metadata for this application -->
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+              
+              <!-- Application Title -->
+              <title>CONNECT</title>
 
-  <title>CONNECT</title>
+              <!-- Files import -->
+                  <!-- Polyfill for the webcomponents -->
+                  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+                  
+                  <!-- Importing the Custome elements and other bower_component elements -->
+                  <link rel="import" href="/elements/elements.html">
 
-<!-- Files import -->
-  <script src="/bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-
-  <link rel="import" href="/bower_components/font-roboto/roboto.html">
-  <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-  <link rel="import" href="/bower_components/iron-pages/iron-pages.html">
-  <link rel="import" href="/bower_components/iron-icons/social-icons.html">
-  <link rel="import" href="/bower_components/paper-item/paper-icon-item.html">
-  <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
-  <link rel="import" href="/bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-  <link rel="import" href="/bower_components/app-layout/app-drawer/app-drawer.html">
-  <link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-  <link rel="import" href="/bower_components/app-layout/app-header/app-header.html">
-  <link rel="import" href="/bower_components/app-layout/app-header-layout/app-header-layout.html">
-  <link rel="import" href="/bower_components/app-layout/app-toolbar/app-toolbar.html">
-  <link rel="import" href="/bower_components/app-layout/demo/sample-content.html">
-
-  <!-- Elements -->
-  <link rel="import" href="/elements/elements.html">
-
-  <style is="custom-style">
-
-    body {
-            margin: 0;
-            font-family: 'Roboto', 'Noto', sans-serif;
-            background-color: #ccc;
-    }
-
-    app-header {
-            background-color: var(--google-red-500);
-            /*background-color: var(#4285f4);*/
-            color: #fff;
-    }
-
-    app-header paper-icon-button {
-            --paper-icon-button-ink-color: #fff;
-    }
-
-    app-drawer-layout {
-            --app-drawer-layout-content-transition: margin 0.5s;
-    }
-
-    app-drawer {
-            --app-drawer-content-container: {
-                    background-color: #eee;
-            }
-    }
-
-    .drawer-content {
-            margin-top: 80px;
-            height: calc(100% - 80px);
-            overflow: auto;
-    }
-    .appTitle{
-            font-size: 1.5rem;
-    }
-    iron-pages{
-        padding: 10px;
-    }
-
-  </style>
-</head>
+              <!-- Custom Elements Styling -->
+                  <style is="custom-style">
+                          body {
+                                  margin: 0;
+                                  font-family: 'Roboto', 'Noto', sans-serif;
+                                  background-color: #ccc;
+                          }
+                          app-header {
+                                  background-color: var(--google-red-500);
+                                  /*background-color: var(#4285f4);*/
+                                  color: #fff;
+                          }
+                          app-header paper-icon-button {
+                                  --paper-icon-button-ink-color: #fff;
+                          }
+                          app-drawer-layout {
+                                  --app-drawer-layout-content-transition: margin 0.5s;
+                          }
+                          app-drawer {
+                                  --app-drawer-content-container: {
+                                          background-color: #eee;
+                                  }
+                          }
+                          .drawer-content {
+                                  margin-top: 80px;
+                                  height: calc(100% - 80px);
+                                  overflow: auto;
+                          }
+                          .appTitle{
+                                  font-size: 1.5rem;
+                          }
+                          iron-pages{
+                              padding: 10px;
+                          }
+                  </style>
+      </head>
 
 <body unresolved>
 
@@ -90,97 +75,127 @@
 
       <app-drawer>
         <div class="drawer-content">
-          <paper-icon-item onclick="_doSelectDailyboard()">
-            <iron-icon icon="inbox" item-icon></iron-icon> <span> TODAY </span>
-          </paper-icon-item>
-          <paper-icon-item onclick="_doSelectTime()">
-            <iron-icon icon="query-builder" item-icon></iron-icon> <span> CLOCK </span>
-          </paper-icon-item>
-          <paper-icon-item onclick="_doSelectAnalytics()">
-            <iron-icon icon="done" item-icon></iron-icon> <span> ANALYTICS REPORT </span>
-          </paper-icon-item>
-          <paper-icon-item onclick="Javascript: alert('Not Available Yet...In Progress');">
-            <iron-icon icon="social:poll" item-icon></iron-icon> <span> POLLING </span>
-          </paper-icon-item>
-          <paper-icon-item onclick="Javascript: alert('Not Available Yet...In Progress');">
-            <iron-icon icon="notification:event-note" item-icon></iron-icon> <span> EVENTS </span>
-          </paper-icon-item>
-          <paper-icon-item onclick="_doSelectExtra()">
-            <iron-icon icon="code" item-icon></iron-icon> <span> Experiments </span>
-          </paper-icon-item>
+
+              <!-- Home Menu -->
+              <paper-icon-item onclick="_doSelectBaseMenu()" title="Base Menu">
+                  <iron-icon icon="icons:home" item-icon></iron-icon> <span> BASE </span>
+              </paper-icon-item>
+
+              <!-- Manually Generate Test Graph report from Your Cucumber JSON File. -->
+              <paper-icon-item onclick="_doGenerateReportFromJSON()" title="Generate graph reports from cucumber json file.">
+                <iron-icon icon="editor:insert-drive-file" item-icon></iron-icon> <span> CUKEs REPORT </span>
+              </paper-icon-item>
+
+              <!-- Render graph report from Reporting Server directly -->
+              <paper-icon-item onclick="_doGenerateReportFromReportingServer()" title="Generate graph reports from Reporting Server directly.">
+                  <iron-icon icon="icons:assessment" item-icon></iron-icon> <span> REPORT SERVER </span>
+              </paper-icon-item>
+
+              <!-- Display the Time for provided timezones -->
+              <paper-icon-item onclick="_doSelectTime()" title="Clock Time for different-different timezones">
+                <iron-icon icon="query-builder" item-icon></iron-icon> <span> CLOCK </span>
+              </paper-icon-item>
+
+              <!-- ToDo Events -->
+              <paper-icon-item onclick="Javascript: alert('Not Available Yet...In Progress');" title="ToDo Events/Tasks">
+                <iron-icon icon="notification:event-note" item-icon></iron-icon> <span> EVENTS </span>
+              </paper-icon-item>
+
+              <!-- My Experiments list [Not to change] -->
+              <paper-icon-item onclick="_doSelectExtra()"  title="NNG's all experiment list">
+                <iron-icon icon="code" item-icon></iron-icon> <span> Experiments </span>
+              </paper-icon-item>
+              
+              <!-- Other Element -->
+              <!--
+              <paper-icon-item onclick="_doSelectAnalytics()">
+                <iron-icon icon="done" item-icon></iron-icon> <span> ANALYTICS REPORT </span>
+              </paper-icon-item>
+              <paper-icon-item onclick="Javascript: alert('Not Available Yet...In Progress');">
+                <iron-icon icon="social:poll" item-icon></iron-icon> <span> POLLING </span>
+              </paper-icon-item>
+              -->
         </div>
       </app-drawer>
 
       <!-- Element in main view -->
-                    <iron-pages id="pages" selected="1">
+                    <iron-pages id="pages" selected="0">
 
-                            <!-- 0: Welcome Board -->
+                            <!-- Welcome elements -->
                             <nng-welcome></nng-welcome>
 
-                            <!-- 1: Notifications -->
+                            <!-- 0: Graph report from Cucumber json raw file -->
+                            <nng-cucumber-reports></nng-cucumber-reports>
+
+                            <!-- 1: Graph report directly from Reporting server -->
+                            <nng-reports></nng-reports>
+                            
+                            <!-- 2:show the different time for diff timezones -->
                             <nng-time></nng-time>
 
-                            <!-- 2: All Teams -->
-                            <nng-team-dashboard></nng-team-dashboard>
-
-                            <!-- 4: Polling -->
+                            <!-- 3: ToDo Events -->
                             <nng-form></nng-form>
 
-                            <!-- 5: Experiments -->
+                            <!-- 4: Experiments -->
                             <nng-connect-experiments></nng-connect-experiments>
+                            <!-- <sample-content size="100"></sample-content> -->
+                            <!-- <nng-newshub size="10"></nng-newshub> -->
 
                     </iron-pages>
-                                <!-- <sample-content size="100"></sample-content> -->
-                                <!-- <nng-newshub size="10"></nng-newshub> -->
-
+                               
     </app-drawer-layout>
 
   </app-header-layout>
 
   <script>
-/*
-    Handling selection.
-*/
-    function _doSelectDailyboard(){ document.getElementById('pages').selected = 0; }
-    function _doSelectTime(){ document.getElementById('pages').selected = 1; }
-    function _doSelectAnalytics(){ document.getElementById('pages').selected = 2; }
-    function _doSelectPolling(){ document.getElementById('pages').selected = 3; }
-    function _doSelectExtra(){ document.getElementById('pages').selected = 4; }
 
-/*
-    Handling side panel.
-*/
-    var drawerLayout = document.getElementById('drawerLayout');
-    //Initially close the drawer.
-    drawerLayout.forceNarrow = true;
+      /* =========================================================
+       * Handling Side panel Menu selection.
+       * =========================================================
+       **/
+        function _doSelectBaseMenu(){         document.getElementById('pages').selected = 0; }
+        function _doGenerateReportFromJSON(){ document.getElementById('pages').selected = 1; }
+        function _doGenerateReportFromReportingServer(){ document.getElementById('pages').selected = 2; }
+        function _doSelectTime(){             document.getElementById('pages').selected = 3; }
+        function _doSelectPolling(){          document.getElementById('pages').selected = 4; }
+        function _doSelectExtra(){            document.getElementById('pages').selected = 5; }
 
-    document.getElementById('toggle').addEventListener('tap', function() {
-      if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
-        drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
-      } else {
-        drawerLayout.drawer.toggle();
-      }
-    });
+      /* =========================================================
+       * Handling side panel [Menu Drawer and Icon]
+       * =========================================================
+       **/
+        var drawerLayout = document.getElementById('drawerLayout');
+        //Initially close the drawer.
+        drawerLayout.forceNarrow = true;
 
-    /*
-        Javascript Binding for element.
-    */
-    (function(scope) {
-            var title = 'CONNECT';
-      var items = [];
-      var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
+        document.getElementById('toggle').addEventListener('tap', function() {
+          if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
+            drawerLayout.forceNarrow = !drawerLayout.forceNarrow;
+          } else {
+            drawerLayout.drawer.toggle();
+          }
+        });
 
-      while (items.length < 10) {
-        items.push('Option Name');
-      }
+      /* =========================================================
+       * Javascript Binding for Drawer Menu Icon Polymer Elements.
+       * =========================================================
+       **/
+          (function(scope) {
+                  var title = 'CONNECT';
+                  var items = [];
+                  var icons = ['inbox', 'icons:assessment', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
 
-      scope._randomIcon = function() {
-        return icons[parseInt(icons.length * Math.random())];
-      };
+                  /*
+                  while (items.length < 10) {
+                    items.push('Option Name');
+                  }
 
-      scope.items = items;
-
-    })(document.querySelector('#connect'));
+                  scope._randomIcon = function() {
+                    return icons[parseInt(icons.length * Math.random())];
+                  };
+                  scope.items = items;
+                  */
+          })(document.querySelector('#connect'));
   </script>
 
 </body>

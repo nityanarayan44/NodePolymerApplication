@@ -82,7 +82,7 @@
         <!-- Design -->
                     <iron-grid>
                         <template is="dom-repeat" items="{{d}}" as="arr" index-as="i">
-                                        <div class="graphbox xl6 l6 m6 s12 xs12">
+                                        <div class="graphbox xl4 l4 m4 s4 xs6">
                                             <paper-material elevation="[[elevation]]">
                                                         <!-- Timezone label -->
                                                         <div class="counter_timeZonelbl tag"><font color="[[arr.data.0.color]]"> [[arr.data.0.timezone]] </font></div>
@@ -116,8 +116,10 @@
                             type: Array,
                             value: function(){
                                 return [
-                                    "Asia/Kolkata",
-                                    "Europe/Amsterdam", "Europe/Prague", "Europe/London", "Europe/Paris", "Australia/Melbourne", "Australia/Perth", "Australia/Sydney"
+                                    "Asia/Kolkata", "Europe/Amsterdam", 
+									"America/Chicago", "America/New_York", 
+									"Europe/Paris", "Australia/Melbourne", 
+									"Australia/Perth", "Australia/Sydney"
                                 ];
                             },
                             notify: true
