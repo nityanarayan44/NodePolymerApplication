@@ -1,0 +1,386 @@
+<!--
+@author: Preety Kiran
+date:
+@Desc : Connect dashboard
+-->
+
+<!--
+
+-- DONE --
+===============================
+    Used flex layout
+    Used paper-card  //Discarded.
+    Used Iron-Ajax
+    Used Iron-Grid
+
+-- TODO:// --
+==============================
+    Paper-card removal                                      [DONE]
+    Properties manupulations for google-chart OPTIONS.      []
+    Element Elevation option.                               [DONE]
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/google-chart/google-chart.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<!-- Custom Element -->
+<link rel="import" href="../../bower_components/iron-grid/iron-grid.html">
+<!-- Paper card -->
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<!-- Layout -->
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="tf-dashboard">
+
+
+    <!-- Starting template -->
+    <template>
+
+        <style>
+            :host{
+                display   : block;
+                position  : relative;
+                width     : 100%;
+                @apply(--tf-dashboard);
+            }
+
+            google-chart {
+              width         : 100%;
+              height        : 300px;
+              position      : relative;
+              padding       : 0px;
+            }
+
+            paper-card{
+                /*margin-top:3px;*/
+                width:100%;
+                height:100%;
+                margin: 0px;
+
+                /*margin-bottom: 5px;*/
+                /*padding: 5px;*/
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                @apply(--tf-dashboard-paper-card);
+            }
+            .card-content{
+                padding: 10px;
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                @apply(--tf-dashboard-card-content);
+            }
+            .counter_val {
+                font-size: 5em;
+                font-weight: 300;
+                color: #2196F3;
+                @apply(--tf-dashboard-counter-value);
+            }
+            .counter_lbl{
+                font-size: 0.9em;
+                font-weight:lighter;
+                @apply(--tf-dashboard-counter-label);
+            }
+            .counter_unit{
+                color: #2196F3;
+                font-size: 0.8em;
+                font-weight:lighter;
+                @apply(--tf-dashboard-counter-unit);
+            }
+            /* DIV/Card with All screen sizes */
+            .graphbox {
+                padding: 5px;
+                background: transparent;
+
+                @apply(--layout-vertical);
+                @apply(--layout-center);
+                @apply(--tf-dashboard-graph);
+            }
+
+            /*Div Elevation Setting [Classes for elevation]*/
+          /* NOT IN USE
+            .card-shadow-1{box-shadow  :   0 2px 2px 0 rgba(0, 0, 0, 0.14),     0 1px 5px 0 rgba(0, 0, 0, 0.12),    0 3px 1px -2px rgba(0, 0, 0, 0.2); border-radius: 2px;}
+            .card-shadow-2{box-shadow  :   0 3px 4px 0 rgba(0, 0, 0, 0.14),     0 1px 8px 0 rgba(0, 0, 0, 0.12),    0 3px 3px -2px rgba(0, 0, 0, 0.4); border-radius: 2px;}
+            .card-shadow-3{box-shadow  :   0 4px 5px 0 rgba(0, 0, 0, 0.14),     0 1px 10px 0 rgba(0, 0, 0, 0.12),   0 2px 4px -1px rgba(0, 0, 0, 0.4); border-radius: 2px;}
+            .card-shadow-4{box-shadow  :   0 6px 10px 0 rgba(0, 0, 0, 0.14),    0 1px 18px 0 rgba(0, 0, 0, 0.12),   0 3px 5px -1px rgba(0, 0, 0, 0.4); border-radius: 2px;}
+            .card-shadow-5{box-shadow  :   0 8px 10px 1px rgba(0, 0, 0, 0.14),  0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.4); border-radius: 2px;}
+          */
+        </style>
+
+
+        <!-- Setting Iron ajax and calling an API to get data -->
+        <iron-ajax
+            id="ajax"
+            url="http://localhost:20000/eko/v1/chart"
+            handle-as="json"
+            method="GET"
+            on-response="_onResponse"
+            on-error="_onError"
+            timeout="60000">
+        </iron-ajax>
+
+        <!-- Main Content of Element will render here.-->
+        <iron-grid>
+            <!-- dom repeat -->
+            <template is="dom-repeat" items="{{data}}" as="arr" index-as="i">
+
+            <!-- Dom if, Counter type found -->
+                <template is="dom-if" if="[[isCounterType(arr)]]">
+                <div class$="graphbox [[setLayout(arr)]]">
+                          <paper-card elevation="[[elevation]]">
+                            <!-- Couter Number Graph -->
+                            <div class="card-content">
+                                <div class="counter_unit">[[arr.data.0.unit]]</div>
+                                <div class="counter_val">[[arr.data.0.value]]</div>
+                                <div class="counter_lbl">[[arr.data.0.label]]</div>
+                            </div>
+                          </paper-card>
+                </div>
+                </template>
+
+            <!-- Dom if, Google chart type found -->
+                <template is="dom-if" if="[[isGraphType(arr)]]">
+                <div  class$="graphbox [[setLayout(arr)]]">
+                    <paper-card elevation="[[elevation]]">
+                      <!-- Simple Google chart. -->
+                      <google-chart
+                          id   = "gChart"
+                          type = "[[arr.type]]"
+                          data = '[[arr.data]]'
+                          options ='[[setGraphOption(arr)]]'
+                      >
+                      </google-chart>
+                    </paper-card>
+                </div>
+                </template> <!-- End of google chart template. -->
+            </template><!-- End of data repeat template -->
+        </iron-grid>
+<!-- Toast, if Ajax call fails. -->
+<!--
+<paper-toast id="toast">
+  <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ajax failure.</span>
+</paper-toast>
+-->
+
+</template>
+
+
+<script>
+    Polymer({
+        is: 'tf-dashboard',
+
+//** Element Properties
+        properties:{
+            //property which hold data from an API.
+            data:{
+                type: Array,
+                value: function(){ return [];},
+                notify: true
+            },
+            /* Property for paper card elevation(box-shadow) from outside */
+            elevation:{
+                type: Number,
+                value: 1
+            },
+            /* Property for Google chart customization */
+            //Available OPTIONS
+            // legend, chartArea, curveType, title, is3D, colors
+            graphOption:{
+                type: Object,
+                value: {
+                        lineSize:2,
+                        pieHole: 0.5,
+                        backgroundColor: {stroke:null, fill:'transparent', strokeSize: 1},
+                        title: "My Graph",
+                        legend: { position: "bottom" },
+                        chartArea:{left:0,top:0,width:"100%",height:"85%"},
+                        curveType: "function",
+                        colors: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'],
+                        animation:{duration: 1000,easing: 'out'},
+                        hAxis: { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' },
+                        vAxis: { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}}
+                },
+                readOnly: true
+            }
+        },
+
+//** Element Functions
+
+/*
+hAxis: {
+    title: 'Year',
+    titleTextStyle: {
+        color: '#333'
+    },
+    gridlines: {
+        color: '#f3f3f3',
+        count: 0
+    },
+    format: '####'
+},
+vAxis: {
+    minValue: 0,
+    gridlines: {
+        color: '#f3f3f3',
+        count: 0
+    }
+}
+*/
+        //Functions in case.
+        //===[Checking types.]===================
+        isGraphType: function(arr){
+            return (arr.type !== 'counter')? true : false ;
+        },
+        isCounterType: function(arr){
+            return (arr.type == 'counter')? true : false ;
+        },
+        //Set layout function.
+        setLayout: function(arr){
+            //Setting up box shadow.
+            //console.log("Provided Elevation: ", this.elevation);
+            var eleveationClass = 'card-shadow-'+ this.elevation +'';
+
+            return (arr.fullWidth)? 'xl12 l12 m12 s12 xs12' : 'xl4 l4 m4 s12 xs12' ;
+        },
+
+        //Set graph Option.
+        setGraphOption: function(arr){
+/*
+            if(arr.option){
+            		arr.option.legend 		= arr.option.legend || "bottom";
+            		arr.option.pieHole 		= "pieHole" in arr.option? arr.option.pieHole || 0.8;
+            		arr.option.colors 		= "colors" in arr.option ? arr.option.colors 		: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
+            		arr.option.curveType 		= "curveType" in arr.option ? arr.option.curveType	: "function" ;                                      //Set curveType
+            		arr.option.chartArea 		=  "chartArea" in arr.option? arr.option.chartArea       	: {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
+            		arr.option.hAxis 		= "hAxis" in arr.option  ? arr.option.hAxis              : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
+            		arr.option.vAxis		= "vAxis" in arr.option ? arr.option.vAxis              	: { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
+            		arr.option.animation		= "animation" in arr.option ? arr.option.animation       	: {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
+            		arr.option.backgroundColor = "backgroundColor" in arr.option ? arr.option.backgroundColor : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
+            		//finally return the changes.
+            		return arr.option;
+            }else{
+		        return this.graphOption;
+	        }
+*/
+		return this.graphOption;
+        },
+
+        //Currently Not in use.
+        //===[Converting Numbers to short number with C/K/L/Cr]===================================
+        showOnly: function(number){
+            console.log("Processing ????- Number is: ", n);
+            var n = 0.0;
+            var res = 0.0;
+            if(number !== undefined){
+                var len = number.length;
+                n       = parseInt(number)/Math.pow(10, len) ;
+
+                console.log(" GOT >>>>", n);
+                res = ( (len % 2 == 0)? (n * 10):(n * 100) );   /* For single or double digit before decimal*/
+                res = Math.floor(res * 10)/10;                  /* Upto 2 Decimal Places only. */
+
+                console.log("[>>>>>>>>Final = ", res);
+                //returning as string [short_number + (C/K/L/Cr)]
+                return (len == 3)? (res+' C') : ((len >= 4 && len <= 5)? (res+' K') : ((len >= 6 && len <= 7)? (res+' L') : ((len >=8 && len <= 9)? (res+' Cr.') : (res) ) )) ;
+            }
+        },
+
+        //IRON-AJAX Response
+        _onResponse: function(e, resp){
+            this.obj = (resp.response);
+            this.data = (resp.response);
+            console.log(this.data);
+
+            /*--[RESPONSE Recieved successfully, Now check for Options, is available]-------------------------------*/
+
+        },
+
+        _onError: function(error){
+			// TODO: Just show the error message, or we can retry here also.
+			console.log("\n\n\nAjax failure, Response error: ", error, "\n\n\n\n\n");
+      //TODO: show a toast message.
+    	},
+
+        attached: function(){
+
+            //Setting Ajax Url
+            //eko 4-1
+            //this.$.ajax.url = "http://192.168.100.244:20000/eko/v1/chart";
+            this.$.ajax.url = "http://localhost:20000/eko/v1/chart";
+            //this.$.ajax.url = "https://localhost:8443/eko/v1/customers/csp/";
+
+            console.log("Calling API at the Address >>>>>>>>", this.$.ajax.url);
+	//eko 3-2-0
+            //this.$.ajax.url = "http://192.168.1.240:20000/eko/v1/chart";
+            //My PG Network.
+            //this.$.ajax.url = "http://192.168.0.113:20000/eko/v1/chart";
+
+            //this.$.ajax.contentType = "application/json";
+            //Setting Ajax Method.
+            this.$.ajax.method = "GET";
+
+            //calling AJAX
+            this.$.ajax.generateRequest();
+        }
+
+    });
+
+</script>
+</dom-module>
+
+
+<!--
+<script>
+//
+// /* If Option is available in API data.*/
+// if(arr.option){
+// /*
+//                                         arr.option.pieHole = "pieHole" in arr.option ? arr.option.pieHole || 0.8;
+//                                         arr.option.legend = arr.option.legend || "bottom";
+// */
+//
+//
+// //Set all values from option Otherwise set defaul values.
+// var objectOption = {};
+// //checking for all option, expected in optiion.
+// objectOption.title              = (arr.option.title)            ? arr.option.title                   : "";                                               //Set title
+// objectOption.pieHole            = (arr.option.pieHole)          ? arr.option.pieHole                 : 0.8;                                              //Set donut
+// objectOption.chartArea          = (arr.option.chartArea)        ? arr.option.chartArea               : {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
+// objectOption.legend             = (arr.option.legend)           ? arr.option.legend                  : "bottom";                                         //Set legend position
+// objectOption.colors             = (arr.option.colors)           ? arr.option.colors                  : ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
+// objectOption.curveType          = (arr.option.curveType)        ? arr.option.curveType               : "function" ;                                      //Set curveType
+// //objectOption.is3D               = (arr.option.is3D)             ? arr.option.is3D                    : false ;                                           //Set 3D chart
+// objectOption.backgroundColor    = (arr.option.backgroundColor)  ? arr.option.backgroundColor    : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
+// objectOption.hAxis              = (arr.option.hAxis)            ? arr.option.hAxis              : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
+// objectOption.vAxis              = (arr.option.vAxis)            ? arr.option.vAxis              : { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
+// objectOption.animation          = (arr.option.animation)        ? arr.option.animation          : {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
+// //animation:{duration: 1000,easing: 'out',}
+// //Setting value.
+// this.graphOption = objectOption;
+// }
+// //returning final google-chart options for customization.
+// return this.graphOption;
+// </script>
+
+
+                    //         //Set all values from option Otherwise set defaul values.
+                    //         var objectOption = {};
+            		// //checking for all option, expected in optiion.
+                    //         objectOption.title              = (arr.option.title)            ? arr.option.title                   : "";                                               //Set title
+                    //         objectOption.pieHole            = (arr.option.pieHole)          ? arr.option.pieHole                 : 0.8;                                              //Set donut
+                    //         objectOption.chartArea          = (arr.option.chartArea)        ? arr.option.chartArea               : {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
+                    //         objectOption.legend             = (arr.option.legend)           ? arr.option.legend                  : "bottom";                                         //Set legend position
+                    //         objectOption.colors             = (arr.option.colors)           ? arr.option.colors                  : ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
+                    //         objectOption.curveType          = (arr.option.curveType)        ? arr.option.curveType               : "function" ;                                      //Set curveType
+                    //         //objectOption.is3D               = (arr.option.is3D)             ? arr.option.is3D                    : false ;                                           //Set 3D chart
+                    //         objectOption.backgroundColor    = (arr.option.backgroundColor)  ? arr.option.backgroundColor    : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
+                    //         objectOption.hAxis              = (arr.option.hAxis)            ? arr.option.hAxis              : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
+                    //         objectOption.vAxis              = (arr.option.vAxis)            ? arr.option.vAxis              : { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
+                    //         objectOption.animation          = (arr.option.animation)        ? arr.option.animation          : {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
+            		// //animation:{duration: 1000,easing: 'out',}
+                    //         //Setting value.
+                    //         this.graphOption = objectOption;
+
+-->
