@@ -9,10 +9,10 @@
 
 /* Express nodejs framework module */
 	var express 	= require('express');
-	var app 		= express();
+	var app 	= express();
 
 /* Extra Payloads Modules */
-	var multer 		= require("multer");
+	var multer 	= require("multer");
 	var bodyParser 	= require('body-parser');
 	var cookieParser= require('cookie-parser');
 	var session 	= require('express-session');
@@ -24,21 +24,21 @@
 	var formidable	= require('formidable');
 
 /* Importing basic modules */
-	var path 		= require('path');
-	var fs 			= require('fs');
-	var util 		= require('util');
+	var path 	= require('path');
+	var fs 		= require('fs');
+	var util 	= require('util');
 /* MongoDB Driver */
 	var MongoClient = require('mongodb').MongoClient;
-	var assert = require('assert');
-	var url = 'mongodb://localhost:27017/test';
+	var assert 	= require('assert');
+	var url 	= 'mongodb://localhost:27017/test';
 /* Own written modules-library */
 	var coreLogics 	= require('./lib/coreLogics.js');
-	var form 		= require('./lib/formProcessing.js');
+	var form 	= require('./lib/formProcessing.js');
 	var teamjsondata= require('./lib/teamjsondata.js');
 	var todayInHistory= require('./lib/todayInHistory.js');
 	
-/* Data */
-	var empdata = require('./data/empdata.js');
+/* (json file data) Local stored Data */
+	var empdata 	= require('./data/empdata.js');
 
 /* Setting up static directory for static file serving. */
 	//Whenever anyone acces this server url(base url) then these public file will be served directly.
@@ -47,18 +47,19 @@
 
 /* Starting server on defined PORT*/
 	app.listen(port);
-	console.log("\n[1] - Server listening on port " + port + "... [http://localhost:"+port+"/]");
+	console.log("\n[1] - Server listening on port " + port + "... [http://127.0.0.1:"+port+"/] \n Press Ctrl+C to Quit the server. \n");
 
 /*------------------------
 	Logging Requested route url.
 --------------------------*/
 	app.use(function(req, res, next){ console.log(" Requested URL ["+ req.ip +"]>>>", req.url); next(); });
 
-/*-----------------------------
-	Defining different Routes
--------------------------------*/
+	/*-------------------------------
+	 * General perpose Routes
+	 *-------------------------------
+	 **/
 	//POST
-	app.post('/', function(req, res, next){ 
+	app.post('/', function(req, res, next){
 		console.log(req);
 		saveData(req.body);
 		res.header('Access-Control-Allow-Origin', '*');
@@ -77,33 +78,34 @@
 	//to Get the team list.
 	app.get("/api/v1/getTeam", teamjsondata.getTeam );
 
-/*
-	----------------------------------------------------------------------------------------------------------------------------
-	 Routes for data saving to Mongo.
-	---------------------------------------------------------------------------------------------------------------------------
-*/
 	//Recieving test data and saving it to mongo DB.
 	app.post('/nng/v1/core/sendTestData', function(req, res, next){res.status(200).send("sendTestData");});
 	
+	//API to get data for Report Generation
+	app.post('/nng/core/api/v1/getTestData/', function(req, res, next){res.status(200).send("Called getTestData");});
 	
-/*
-	----------------------------------------------------------------------------------------------------------------------------
-	Callback Functions for Routes
-	---------------------------------------------------------------------------------------------------------------------------
-*/
-
-//=[Building SAMPLE JSON DATA]=====================================================================================
+	/*
+	 *----------------------------------------------------------------------------------------------------------------------------
+	 *Callback Functions for Routes
+	 *---------------------------------------------------------------------------------------------------------------------------
+	 **/
 	function sendJSONData(req, res, next){
 		//making data for an API request
 		var arrData = [{"Type":"Sample"}];//Finally sending after stringify json data.
 		res.status(200).send(JSON.stringify(arrData));
 	}
 
+	/*
+	 *----------------------------------------------------------------------------------------------------------------------------
+	 * Callback functions for data saving to Mongo.
+	 *---------------------------------------------------------------------------------------------------------------------------
+	 **/
+	
 	function connectToMongo(){
 		MongoClient.connect(url, function(err, db) {
-		  assert.equal(null, err);
-		  console.log(">>> Connected correctly to server.");
-		  db.close();
+			assert.equal(null, err);
+			console.log("MongoDB>>> Connected to DB server.");
+			db.close();
 		});
 	}
 
@@ -111,9 +113,9 @@
 		MongoClient.connect(url, function(err, db) {
 			if (err) throw err;
 			db.createCollection(collectionName, function(err, res) {
-			  if (err) throw err;
-			  console.log("Collection created!");
-			  db.close();
+				if (err) throw err;
+				console.log("MongoDB>>> Collection created Successfully !!!");
+				db.close();
 			});
 		}); 
 	}
@@ -123,7 +125,7 @@
 			if (err) throw err;
 			db.collection("customers").insertOne(dataObject, function(err, res) {
 			  if (err) throw err;
-			  console.log("Record inserted");
+			  console.log("MongoDB>>> Record inserted successfully !!!");
 			  db.close();
 			});
 		});

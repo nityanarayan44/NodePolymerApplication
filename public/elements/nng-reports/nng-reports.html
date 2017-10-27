@@ -31,11 +31,12 @@
                 @apply(--nng-reports);
             }
 
+            /* 
             google-chart {
               width         : 100%;
               height        : 100%;
-              /*position      : relative;
-              padding       : 0px;*/
+              position      : relative;
+              padding       : 0px;
             }
 
             paper-material{
@@ -80,7 +81,7 @@
                 font-weight:lighter;
                 @apply(--nng-reports-counter-unit);
             }
-            /* DIV/Card with All screen sizes */
+            
             .graphbox {
                 padding: 5px;
                 background: transparent;
@@ -105,10 +106,10 @@
                     border-style: none;
                     border-bottom-style: solid; border-bottom-width: 1px;
             }
-            /*table.discTblHeader > tr > th {
+            table.discTblHeader > tr > th {
                     align-items: center;
                     align-content: center;
-            }*/
+            }
             td{
                     border-style: none;
                     border-bottom-style: solid; border-bottom-width: 1px;
@@ -123,13 +124,15 @@
                     border-bottom-style: solid; border-bottom-width: 2px; border-bottom-color: black;
             }
 
-            .hh {
+        .hh {
                 font-weight: bold;
                 font-size: 1.5em;
                 background-color: lightgray;
-            }
+        } */
+
         @media print {
-                #uploadBtn * { display:none; }
+                * { display:none; }
+                #printarea {display: block; }
                 paper-material {
                         border-radius: 3px;
                         border-style: solid;
@@ -151,23 +154,6 @@
             timeout="60000">
         </iron-ajax>
 
-<!-- File Upload UI Part.
------------------------------------------------------->
-        <!-- Upload Section -->
-        <div id="uploadBtn">
-                <paper-icon-button icon="icons:cloud-upload" data-dialog="modal" onclick="auth.open()" TITLE="Upload Cucmber json report file to generate intractive REPORT and take a print out."></paper-icon-button>
-                <span>Upload Cucumber JSON file.</span>
-                <button onclick="window.print();">Print Now</button>
-        </div>
-        <paper-dialog id="auth" class="user-dialog" alwaysOnTop="true">
-                <h2> Upload your Cucumber Json report file here... </h2>
-                <input type="file" name="file" id="file"/>
-                <div class="buttons">
-                        <paper-button dialog-cancel> CANCEL </paper-button>
-                        <paper-button  dialog-confirm autofocus on-click="_checkFile" raised> GENERATE REPORT </paper-button>
-                </div>
-        </paper-dialog>
-
 <!-- Report Generation part.
 Main Content of Element will render here.
 ------------------------------------------------------>
@@ -176,7 +162,7 @@ Main Content of Element will render here.
                 <!-- Header/Banner for Report. -->
                 <template is="dom-if" if="[[isReportReady]]">
                         <paper-material>
-                                <div class="reportBanner"> CUCUMBER REPORT </div>
+                                <div class="reportBanner"> TEST REPORT </div>
                                 <p>Test Results: </p>
                         </paper-material>
                 </template>
@@ -186,7 +172,7 @@ Main Content of Element will render here.
                         <template is="dom-repeat" items="{{d}}" as="arr" index-as="i">
                                 <!--
                                 Dom if, Rendering Counter type
-                                ------------------------------------------------->
+                                ----------------------------------------------- -->
                                 <template is="dom-if" if="[[isCounterType(arr)]]">
                                         <div class="graphbox xl2 l2 m4 s12 xs12">
                                                 <paper-material id="ppr-card" elevation="[[elevation]]">
@@ -207,16 +193,16 @@ Main Content of Element will render here.
 
                                 <!--
                                 Dom if, Rendering Google chart
-                                ------------------------------------------------->
+                                ----------------------------------------------- -->
                                 <template is="dom-if" if="[[isGraphType(arr)]]">
-                                        <div  class="graphbox xl6 l6 m6 s12 xs12">
+                                        <div class="graphbox xl12 l12 m12 s12 xs12">
                                                 <paper-material elevation="[[elevation]]">
                                                         <!-- Simple Google chart. -->
                                                         <google-chart
                                                                 id   = "gChart"
                                                                 type = "[[arr.type]]"
                                                                 data = '[[arr.data]]'
-                                                                options ='[[setGraphOption(arr)]]'>
+                                                                options ='[[arr.option]]'>
                                                         </google-chart>
                                                 </paper-material>
                                         </div>
@@ -224,7 +210,7 @@ Main Content of Element will render here.
 
                                 <!--
                                 Dom if, Rendering discriptions
-                                --------------------------------------------------->
+                                ------------------------------------------------- -->
                                 <template is="dom-if" if="[[isDesciptionType(arr)]]">
                                         <div  class="graphbox xl12 l12 m12 s12 xs12">
                                                 <!-- Data table For Feature Summary -->
@@ -302,27 +288,60 @@ Main Content of Element will render here.
 
 //** Element Properties
         properties:{
-            //property which hold data from an API.
-            data:{
-                type: Array,
-                value: function(){ return [];},
-                notify: true
-            },
-            /* Property for paper card elevation(box-shadow) from outside */
-            elevation:{
-                type: Number,
-                value: 1
-            },
-            /* Vars for Cucmber report */
+                apiUrl:{
+                        type:String,
+                        value: "http://127.0.0.1:3000/nng/core/api/v1/getTestData/",
+                        notify: true
+                },
+
+                //property which hold data from an API.
+                data:{
+                        type: Array,
+                        value: function(){ return [];},
+                        notify: true
+                },
+                /* Property for paper card elevation(box-shadow) from outside */
+                elevation:{
+                        type: Number,
+                        value: 1
+                },
+
+                /* Vars for Cucmber report */
                 /* Array contains all the data to be rendered. */
                 d:{
                         type: Array,
-                        value: function(){ return []; },
+                        value: function(){ return [
+                                {
+                                        'id':'Time-Distri-Graph', 
+                                        'type':'line', 
+                                        'data': [
+                                                        ["TEST","TIME-TAKEN-IN-SEC"], 
+                                                        ["step1", 12], ["step2", 19], ["step3", 05], ["step3", 15],
+                                                        ["step3", 25],["step3", 2],["step3", 10],["step3", 15],
+                                                        ["step3", 5],["step3", 12],["step3", 1],["step3", 45]
+                                        ],
+                                        'option': {
+                                                //width: '100%',
+                                                animation : {duration: 1000,easing: 'out',"startup": true},
+                                                lineSize:1,
+                                                title: "Time Distribution for each test in scenario",
+                                                legend: { position: "bottom" },
+                                                //chartArea:{left:10, top:0 , width:"100%" , height:"90%" },
+                                                curveType: "function",
+                                                colors: ['darkcyan', 'black', 'darkred', '#f3b49f', '#f6c7b6'],
+                                                is3D: false,
+                                                backgroundColor: {stroke:null, fill:'#FFF', strokeSize: 0},
+                                                hAxis : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 10}, format: '####' },
+                                                vAxis : { minValue: 0, gridlines: {color: '#f3f3f3',count: 10}}
+                                        },
+                                        'fullWidth': true
+                                }
+                        ];},
                         notify: true
                 },
                 isReportReady:{
                         type: Boolean,
-                        value: false,
+                        value: true,
                         notify: true
                 },
                 isTableReady:{
@@ -391,30 +410,30 @@ Main Content of Element will render here.
         },
         //Set layout function.
         setLayout: function(arr){
-            return (arr.fullWidth)? 'xl12 l12 m12 s12 xs12' : 'xl4 l4 m6 s12 xs12' ;
+                console.log('>>>>>>>>>> setlayout is called.');
+            return (arr.fullWidth)? 'xl12 l12 m12 s12 xs12' : 'xl4 l4 m12 s12 xs12' ;
         },
 
         //Set graph Option.
         setGraphOption: function(arr){
 
-            if(arr.option){
-                    console.log("Using API graph Options.");
-                	arr.option.legend 		= arr.option.legend || "bottom";
-            		arr.option.pieHole 		= "pieHole" in arr.option ? arr.option.pieHole : 0.8;
-            		arr.option.colors 		= "colors" in arr.option ? arr.option.colors 		: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
-            		arr.option.curveType 	= "curveType" in arr.option ? arr.option.curveType	: "function" ;                                      //Set curveType
-            		arr.option.chartArea 	= "chartArea" in arr.option? arr.option.chartArea       	: {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
-            		arr.option.hAxis 		= "hAxis" in arr.option  ? arr.option.hAxis              : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
-            		arr.option.vAxis		= "vAxis" in arr.option ? arr.option.vAxis              	: { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
-            		arr.option.animation	= "animation" in arr.option ? arr.option.animation       	: {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
-            		arr.option.backgroundColor = "backgroundColor" in arr.option ? arr.option.backgroundColor : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
-            		//finally return the changes.
-            		return arr.option;
-            }else{
-                console.log("Using default graph Options.");
-		return this.graphOption;
-	    }
-		//return this.graphOption;
+                if(arr.option){
+                        console.log("Using API graph Options.");
+                        arr.option.legend 	= arr.option.legend || "bottom";
+                        arr.option.pieHole 	= "pieHole" in arr.option ? arr.option.pieHole : 0.8;
+                        arr.option.colors 	= "colors" in arr.option ? arr.option.colors 		: ['red', 'green', 'blue', '#f3b49f', '#f6c7b6'] ;  //Set color
+                        arr.option.curveType 	= "curveType" in arr.option ? arr.option.curveType	: "function" ;                                      //Set curveType
+                        arr.option.chartArea 	= "chartArea" in arr.option? arr.option.chartArea       : {left:0,top:0,width:"100%",height:"85%"};         //Set chartArea
+                        arr.option.hAxis 	= "hAxis" in arr.option  ? arr.option.hAxis             : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 0}, format: '####' } ;  //Set horizantal background axis
+                        arr.option.vAxis	= "vAxis" in arr.option ? arr.option.vAxis              : { minValue: 0, gridlines: {color: '#f3f3f3',count: 0}} ;  //Set horizantal background axis
+                        arr.option.animation	= "animation" in arr.option ? arr.option.animation      : {duration: 1000,easing: 'out',"startup": true} ;  //Set horizantal background axis
+                        arr.option.backgroundColor = "backgroundColor" in arr.option ? arr.option.backgroundColor : {stroke:null, fill:null, strokeSize: 0} ;  //Set backgroundColor { fill:'transparent' }
+                        //finally return the changes.
+                        return arr.option;
+                }else{
+                        console.log("Using default graph Options.");
+                        return this.graphOption;
+                }
         },
 
         //IRON-AJAX Response
@@ -432,178 +451,9 @@ Main Content of Element will render here.
                 this.$.toast.show();
     	},
 
-        _checkFile: function(){
-
-                        //Crearing old data.
-                        //console.log('Cleaning old data of json Object.');
-                        this.jsonObject = [];
-
-                        //Reading File
-                        var reader = new FileReader();
-                        var self = this;
-
-                        //Reading File
-                        // Closure to capture the file information.
-                        reader.onload = (function(theFile) {
-                                                return function(e) {
-                                                        JsonObj = JSON.parse(e.target.result);
-                                                        //For Global use.
-                                                        //this.jsonObject = JsonObj;
-                                                        self.push('jsonObject', JsonObj);
-                                                        self._update();
-                                                };
-                        })(this.$.file.files[0]);
-
-                        //OnError [When file reader is unable to read file]
-                        //reader.onerror = (function(e){console.dir(e);})();
-
-                        // Read in the image file as a text.
-                        reader.readAsText(this.$.file.files[0]);
-
-        },
-
-        _render: function() {
-                //Enabling Report Banner/Header.
-                this.isReportReady = true;
-
-                //Variables for Graph options [for customisation purpose]
-                var     lineGraphOption = {
-                                animation : {duration: 1000,easing: 'out',"startup": true},
-				lineSize:1,
-				title: "Time Distribution for each test in scenario",
-				legend: { position: "bottom" },
-				chartArea:{width:"80%", height:"80%"},
-				curveType: "function",
-				colors: ['darkcyan', 'black', 'darkred', '#f3b49f', '#f6c7b6'],
-				is3D: false,
-				backgroundColor: {stroke:null, fill:'#FFF', strokeSize: 0},
-				hAxis : { titleTextStyle: {color: '#333'}, gridlines: {color: '#f3f3f3',count: 5}, format: '####' },
-				vAxis : { minValue: 0, gridlines: {color: '#f3f3f3'}}
-                        },
-                        pieGraphOptions = {
-                                animation : {duration: 1000,easing: 'out',"startup": true},
-                                title: 'Test Success %',
-                                curveType: "function",
-                                legend: { position: "right" },
-                                chartArea:{width:"80%", height:"80%"},
-                                pieHole: 0.6,
-                                colors: ['darkgreen', 'darkred', 'darkgray']
-                        };
-
-                //Variable for main data.
-                var     sampleobj = {},
-                        basicDataTable = [], /* Contains Complete Structure for Discription */
-                        featureTable = [],
-                        scenarioTable = [],
-                        testTable = [],
-                        timeDistributionFortests = [];
-
-                //Counter Variables
-                var     totalFeature = (this.jsonObject[0]).length,
-                        totalScenario = 0,
-                        totalTest = 0,
-                        totalPass = 0,
-                        totalFail = 0,
-                        totalSkipped = 0
-                        testCounter = 0
-                        featureIndex = -1;
-
-                //Initial header/label for time distribution graph
-                        timeDistributionFortests.push(["TEST","TIME-TAKEN-IN-SEC"]);
-                //Processing now
-                        (this.jsonObject[0]).forEach(
-
-                                //Processing a feature.
-                                function(featureObject){
-                                        //Setting Feature file index.
-                                        featureIndex ++;
-                                        //Counting total scenario
-                                        totalScenario += featureObject.elements.length;
-
-                                        //Adding Feature into Feature table.
-                                        //TODO: i should add this in last.
-                                        //featureTable.push( {'name':featureObject.name, 'discription': featureObject.discription, 'uri':featureObject.uri} );
-
-                                        //processing a scenario
-                                        (featureObject.elements).forEach(
-                                                function(scenarioObject){
-                                                        //Counting total steps
-                                                        totalTest += scenarioObject.steps.length;
-                                                        testCounter += scenarioObject.steps.length;
-                                                        //Processing a step/test.
-                                                        (scenarioObject.steps).forEach(
-                                                                function(stepObject){
-
-                                                                        //Adding tests into test table.
-                                                                        testTable.push( {'featureFileIndex': featureIndex, 'name':stepObject.keyword+'- '+stepObject.name, 'status': stepObject.result.status, 'duration':stepObject.result.duration} );
-
-                                                                        //Recording step time.
-                                                                        //console.log("Step Time:: " + stepObject.result.duration + ', ' + (stepObject.result.duration)/1000000000 );
-                                                                        timeDistributionFortests.push([stepObject.keyword+' :: '+stepObject.name, (stepObject.result.duration)/1000000000 ]);
-                                                                        //Counting step status
-                                                                        (stepObject.result.status === 'passed') ? totalPass += 1 : ( (stepObject.result.status === 'failed')? totalFail += 1 : totalSkipped +=1 );
-
-                                                                } /* End of test/step */);
-                                                                //Adding Scenario into Scenario table.
-                                                                scenarioTable.push( {'name':scenarioObject.name, 'discription': scenarioObject.discription, 'StepCount':scenarioObject.steps.length, 'steps': testTable} );
-                                                } /* End of Scenario */
-
-                                        );
-                                        //now i push this result to an featureTable.
-                                        featureTable.push( {'name':featureObject.name, 'discription': featureObject.discription, 'testCount':testCounter, 'uri':featureObject.uri, 'scenario': scenarioTable} );
-                                        testCounter = 0;
-                                }/*End of feature*/
-
-                        );
-
-                //Finally Adding the data to main variable which will render.
-                                //Adding Pie graph.
-                                        this.push('d', {"id":"pieChart","type":"pie", 'option':pieGraphOptions, "data":[ ["STATUS","VALUE"],["PASS",totalPass],["FAIL",totalFail],["SKIPPED",totalSkipped] ],"width":'4' } );
-
-                                //Adding Time distribution by line Graph
-                                        console.log(">>>>>>>>>>>>>>>>>>>>>>>>\n");
-                                        this.stepsTable = testTable;
-                                        /*Available chart types: line, pie, bar, column, area, combo*/
-                                        this.push('d', { 'id':'Time-Distri-Graph', 'type':'area', 'data': timeDistributionFortests, 'option': lineGraphOption, 'width': '8'});
-                                        console.dir(this.stepsTable);
-
-                                //Adding Counters
-                                        //Counter graph for total Feature.
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'TOTAL', 'value': totalFeature, 'unit':'FEATURE', 'color':'#2196F3'} ] });
-                                        //Counter graph for total Scenario
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'TOTAL', 'value': totalScenario, 'unit':'SCENARIO', 'color':'#2196F3'} ] });
-                                        //Counter graph for total Test.
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'TOTAL', 'value': totalTest, 'unit':'TEST', 'color':'#2196F3'} ] });
-
-                                        //Counter graph for total Passed.
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'', 'value': totalPass, 'of':totalTest, 'unit':'PASS', 'color':'#0F0'} ] });
-                                        //Counter graph for total Feature.
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'', 'value': totalFail, 'of':totalTest, 'unit':'FAIL', 'color':'#F00'} ] });
-                                        //Counter graph for total Feature.
-                                        this.push('d', {'id': 'counter-chart', 'type':'counter', 'fullWidth':false, 'data': [ {'label':'', 'value': totalSkipped, 'of':totalTest, 'unit':'UNKNOWN', 'color':'#ccc'} ] });
-
-                                //Feature table is ready now
-                                        console.log('Feature Table :::: ');
-                                        console.dir(featureTable);
-
-                                //Adding Discription table.
-                                        this.push('d', {'id':'disc', 'type':'discription', 'data': featureTable});
-        },
-
-        _update: function(){
-                console.log("Uploaded File: "+  this.$.file.files[0].name );
-                console.log("File Rendered....");
-                //Logging uploaded JSON File data
-                //console.log(this.jsonObject);
-
-                //A file is uploaded for rendering, so clean the old report first.
-                //Rendering Graph from JSON REPORT..
-                this._render();
-        },
-
         attached: function(){
             //Setting Ajax Url
-            this.$.ajax.url = "http://localhost:10000/v1/reportdata"
+            this.$.ajax.url = this.apiUrl;
 
             //logging.
             console.log("Calling API at the Address >>>>>>>>", this.$.ajax.url);
